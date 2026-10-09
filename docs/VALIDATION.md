@@ -1,3 +1,7 @@
+# Historical v0.1 validation
+
+This file records the baseline release. Current upgrade evidence is in [TEST_RESULTS.md](TEST_RESULTS.md), reproduction in [TESTING.md](TESTING.md), and limitations in [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md).
+
 # Validation and release status
 
 This file records evidence, not a blanket production-readiness claim.

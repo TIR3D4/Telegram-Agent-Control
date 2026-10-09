@@ -13,9 +13,9 @@
 
 ## What it does
 
-Telegram Agent Control provides a web console, REST API, MCP bridge and persistent worker over a generated Telegram Bot API registry. An agent can discover a method, inspect its schema, prepare an operation and monitor the real result. The owner approves external writes. The server stores execution state, media, workflows and an audit trail in PostgreSQL.
+Telegram Agent Control provides a web console, REST API, MCP bridge and persistent worker over a generated Telegram Bot API registry. An agent can discover a method, inspect its schema, prepare an operation and monitor the real result. The owner approves external writes. The server stores execution state, media, workflows and an audit trail in PostgreSQL. Version 0.2 adds 42 tested MCP tools, per-agent scopes and ownership, expiring approvals, OAuth resource verification, audited credential lifecycle and verified backups.
 
-**Version 0.1.0 is an initial release for controlled deployment.** It is not a claim that every Telegram method has been exercised against live Telegram. See [coverage and validation](docs/VALIDATION.md) for the distinction between schema coverage, mocked transport tests and live acceptance.
+**Version 0.2.0 is a hardening candidate for reviewed staging deployment.** It is not a claim that every Telegram method has been exercised against live Telegram. See [test evidence](docs/TEST_RESULTS.md) for the distinction between schema coverage, mocked transport tests and live acceptance.
 
 | Capability | Included |
 |---|---|
@@ -24,22 +24,22 @@ Telegram Agent Control provides a web console, REST API, MCP bridge and persiste
 | Channel controls | Edit, delete, pin/unpin, invite/member/chat management through the same operation gateway |
 | Schedules | One-time operation timestamps; bounded cron and event-driven workflows; persisted delay steps |
 | Automation | Publish → pin → delayed unpin, previous-step result references, pause/resume, immutable approval of workflow content |
-| Agent access | REST/OpenAPI, stdio MCP and authenticated Streamable HTTP MCP; lazy method discovery |
+| Agent access | 42 MCP tools, shared REST/OpenAPI policies, scoped expiring credentials, optional external-issuer OAuth; owner stays outside MCP |
 | Emoji studio | Pack import, original files, WebP/TGS/WebM previews, visual labels, reviewed role bindings, image content returned to MCP clients |
-| Observability | JSON application logs, searchable persistent audit API, operation results/errors, worker heartbeat, database schema/counts |
-| Operations | Docker Compose, optional HTTPS, terminal menu, update, backup/restore, safe uninstall and explicit data purge |
+| Observability | Correlated redacted audit/logs, filtered search, queue metrics, worker freshness, safe DB/backup status and optional OTLP spans |
+| Operations | Docker Compose, HTTPS, terminal menu, verified backup/restore, paused upgrades, controlled rollback, safe uninstall |
 
 ## Quick start
 
 Use a Linux VPS with Docker Engine and Compose v2. A practical starting allocation is **2 vCPU, 2–4 GB RAM and 20 GB storage**; media and retention determine disk growth. This is an initial sizing estimate, not a benchmark.
 
 ```bash
-git clone https://github.com/TIR3D4/Telegram-Agent-Control.git
+git clone --branch engineering/production-hardening-v0.2 https://github.com/TIR3D4/Telegram-Agent-Control.git
 cd Telegram-Agent-Control
 ./scripts/install.sh
 ```
 
-The installer prompts for the bot token without echoing it, allowed destinations and an optional HTTPS hostname. It generates separate owner/agent/read keys in a local `.env` with mode `0600`, builds the app, migrates PostgreSQL and starts the API and worker. Docker can be installed through the official installer after an explicit terminal prompt.
+The installer prompts for the bot token without echoing it, allowed destinations and an optional HTTPS hostname. It generates bootstrap secrets in a local `.env` with mode `0600`, disables legacy shared agent keys on fresh installs, builds the app, migrates PostgreSQL and starts the API and worker. Docker can be installed through the official installer after an explicit terminal prompt.
 
 With a configured domain and working DNS, use `https://your-domain`. Without a domain the console binds to `127.0.0.1:8787`; connect with an SSH tunnel:
 
@@ -47,10 +47,10 @@ With a configured domain and working DNS, use `https://your-domain`. Without a d
 ssh -L 8787:127.0.0.1:8787 user@your-server
 ```
 
-Open `http://127.0.0.1:8787` locally. Copy `TAC_OWNER_KEY` from `.env` privately into the console. The console keeps the key in tab memory only. Start with `getMe` and `getChatMember`, then a **test channel**.
+Open `http://127.0.0.1:8787` locally. Copy `TAC_OWNER_KEY` from `.env` privately into the console. The console keeps the key in tab memory only. Issue a finite scoped credential in **Agent permissions**. Start with `getMe` and `getChatMember`, then a **test channel**.
 
 <details>
-<summary>Console screenshot (local test workspace)</summary>
+<summary>Console screenshot (v0.1 local test workspace; current screenshots are CI artifacts)</summary>
 
 ![Control console](docs/assets/console.png)
 
@@ -65,7 +65,7 @@ Open `http://127.0.0.1:8787` locally. Copy `TAC_OWNER_KEY` from `.env` privately
 5. A worker claims the operation and records Telegram's result.
 6. Read status, message links and the audit trail through the API or console.
 
-Changing an approved draft revokes approval. Requests use an idempotency key. A transport timeout after a possible send becomes `uncertain` and is not blindly resent. Telegram does not offer a general client idempotency key; this application does not promise exactly-once external delivery.
+Approvals expire and bind the exact schedule. Changing an approved draft revokes approval. Requests use an idempotency key. A transport timeout after a possible send becomes `uncertain` and is not blindly resent. Telegram does not offer a general client idempotency key; this application does not promise exactly-once external delivery.
 
 ## Architecture
 
@@ -101,13 +101,16 @@ The worker executes deterministic schedules without an LLM call. An external age
 
 - [Installation and first-run checks](docs/INSTALL.md)
 - [REST API and request examples](docs/API.md)
-- [MCP setup and agent instructions](docs/AGENTS.md)
+- [MCP setup](docs/MCP_SETUP.md), [ChatGPT](docs/CHATGPT_CONNECTION.md), [Codex](docs/CODEX_CONNECTION.md)
+- [42 agent tools and schemas](docs/AGENT_TOOLS.md), [permissions](docs/PERMISSIONS.md), [security](docs/SECURITY.md)
 - [Scheduling and automation](docs/AUTOMATION.md)
 - [Emoji catalog and visual selection](docs/EMOJI.md)
 - [Database, observability and recovery](docs/OPERATIONS.md)
 - [Architecture and design decisions](docs/ARCHITECTURE.md)
-- [Coverage, tests and release gates](docs/VALIDATION.md)
-- [Research and source attribution](docs/RESEARCH.md)
+- [Capability matrix](docs/CAPABILITY_MATRIX.md), [testing](docs/TESTING.md), [exact results](docs/TEST_RESULTS.md)
+- [Implementation report](docs/IMPLEMENTATION_REPORT.md) and [known limitations](docs/KNOWN_LIMITATIONS.md)
+- [Upgrade/rollback](docs/UPGRADE.md), [backup/restore](docs/BACKUP_RESTORE.md), [observability](docs/OBSERVABILITY.md)
+- [15-repository source audit](docs/RESEARCH_COMPARISON.md), [gap analysis](docs/GAP_ANALYSIS.md) and [implementation plan](docs/IMPLEMENTATION_PLAN.md)
 - [Persian quick start](docs/README.fa.md)
 
 At runtime: `/docs`, `/redoc`, `/openapi.json`; method-specific contracts: `/v1/methods/{name}` and type references: `/v1/types/{name}`.

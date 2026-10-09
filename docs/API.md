@@ -1,5 +1,8 @@
 # REST API
 
+Current route map and governance contract: [API_REFERENCE.md](API_REFERENCE.md).
+
+
 Base URL: your installation. All `/v1` routes require `Authorization: Bearer <key>` except `/v1/webhook`, which authenticates with Telegram's secret header. `/docs` and `/openapi.json` describe the control API. Requests return `X-Request-ID` for application-log correlation.
 
 ## Discover → validate → submit → inspect
