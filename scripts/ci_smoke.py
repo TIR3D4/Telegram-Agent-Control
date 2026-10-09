@@ -20,23 +20,60 @@ values = {
     "TAC_PORT": "8787",
 }
 Path(".env").write_text("\n".join(k + "=" + json.dumps(v) for k, v in values.items()) + "\n")
+
+
+def ready(client):
+    for attempt in range(45):
+        try:
+            response = client.get("/v1/system")
+            if response.status_code == 200 and response.json().get("worker"):
+                assert response.json()["methods"] == 185
+                return response.json()
+        except httpx.HTTPError:
+            pass
+        time.sleep(2)
+    raise RuntimeError("Compose not ready")
+
+
 try:
     subprocess.run(["docker", "compose", "up", "-d", "--build"], check=True)
-    with httpx.Client(trust_env=False, timeout=5) as c:
-        for attempt in range(45):
-            try:
-                response = c.get(
-                    "http://127.0.0.1:8787/v1/system", headers={"Authorization": "Bearer " + owner}
-                )
-                if response.status_code == 200 and response.json().get("worker"):
-                    assert response.json()["methods"] == 185
-                    print("Compose API, PostgreSQL, migration and worker smoke passed")
-                    break
-            except httpx.HTTPError:
-                pass
-            time.sleep(2)
-        else:
-            raise RuntimeError("Compose not ready")
+    with httpx.Client(
+        base_url="http://127.0.0.1:8787",
+        trust_env=False,
+        timeout=15,
+        headers={"Authorization": "Bearer " + owner},
+    ) as c:
+        ready(c)
+        content = b"Backup and restore fixture; not sent to Telegram."
+        response = c.post("/v1/assets", files={"file": ("fixture.txt", content, "text/plain")})
+        response.raise_for_status()
+        asset_id = response.json()["id"]
+        response = c.post(
+            "/v1/operations",
+            json={
+                "method": "sendDocument",
+                "payload": {"chat_id": "@ci_test", "document": "attach://document"},
+                "attachments": {"document": asset_id},
+                "idempotency_key": "ci-lifecycle-document",
+            },
+        )
+        response.raise_for_status()
+        operation = response.json()
+        assert operation["status"] == "draft"
+        subprocess.run(["./scripts/tacctl", "backup"], check=True)
+        backup = sorted(Path("backups").iterdir())[-1]
+        ready(c)
+        c.post("/v1/operations/" + operation["id"] + "/cancel").raise_for_status()
+        subprocess.run(["./scripts/tacctl", "restore", str(backup)], input="RESTORE\n", text=True, check=True)
+        assert ready(c)["paused"]["enabled"] is True
+        assert c.get("/v1/operations/" + operation["id"]).json()["status"] == "draft"
+        assert c.get("/v1/assets/" + asset_id).content == content
+        subprocess.run(["./scripts/tacctl", "uninstall"], check=True)
+        subprocess.run(["./scripts/tacctl", "start"], check=True)
+        assert ready(c)["paused"]["enabled"] is True
+        assert c.get("/v1/assets/" + asset_id).content == content
+        print("Compose readiness, backup/restore and data-preserving uninstall/reinstall passed")
+
 finally:
     subprocess.run(["docker", "compose", "down", "-v"])
     Path(".env").unlink(missing_ok=True)
