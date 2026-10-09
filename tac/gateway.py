@@ -105,6 +105,8 @@ def identity(actor):
     if actor == "owner":
         return Identity("owner", "ADMIN", human=True)
     if actor in {"agent", "reader"}:
+        if not settings().legacy_agent_keys_enabled:
+            raise HTTPException(403, "Legacy agent credentials disabled")
         return Identity(actor, "READ" if actor == "reader" else "OPERATE")
     raise HTTPException(403, "Unknown execution principal")
 

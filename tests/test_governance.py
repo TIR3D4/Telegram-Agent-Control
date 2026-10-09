@@ -221,3 +221,18 @@ def test_trace_and_logs_do_not_include_credentials(client, owner):
     trace = client.get("/v1/traces/" + r.headers["x-trace-id"], headers=h)
     assert trace.status_code == 200 and trace.json()
     assert h["Authorization"].split()[1] not in trace.text
+
+
+def test_disable_legacy_keys_preserves_scoped_access_and_stops_legacy_work(client, owner, agent, monkeypatch):
+    from tac.config import settings
+
+    _, scoped = grant(client, owner)
+    operation = create(client, agent).json()
+    approve(client, owner, operation)
+    monkeypatch.setattr(settings(), "legacy_agent_keys_enabled", False)
+    assert client.get("/v1/system", headers=agent).status_code == 401
+    assert client.get("/v1/system", headers=scoped).status_code == 200
+    fake = FakeTelegram()
+    cycle(fake)
+    assert not fake.calls
+    assert client.get("/v1/operations/" + operation["id"], headers=owner).json()["status"] == "failed"

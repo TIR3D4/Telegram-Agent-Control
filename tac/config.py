@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     bot_token: SecretStr = SecretStr("")
     owner_key: SecretStr = SecretStr("")
     agent_key: SecretStr = SecretStr("")
+    legacy_agent_keys_enabled: bool = True
     reader_key: SecretStr = SecretStr("")
     webhook_secret: SecretStr = SecretStr("")
     allowed_chats: str = ""
@@ -35,7 +36,9 @@ class Settings(BaseSettings):
 
     def check(self):
         keys = [self.owner_key.get_secret_value(), self.agent_key.get_secret_value()]
-        if any(len(x) < 32 for x in keys) or keys[0] == keys[1]:
+        if len(keys[0]) < 32 or (
+            self.legacy_agent_keys_enabled and (len(keys[1]) < 32 or keys[0] == keys[1])
+        ):
             raise RuntimeError(
                 "Set different TAC_OWNER_KEY and TAC_AGENT_KEY (at least 32 characters). Run scripts/tacctl install."
             )

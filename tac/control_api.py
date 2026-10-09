@@ -487,6 +487,7 @@ def safe_settings(role=Depends(principal)):
         "upload_limit_mb": settings().upload_limit_mb,
         "approval_max_days": settings().approval_max_days,
         "oauth_configured": bool(settings().oauth_issuer),
+        "legacy_agent_keys_enabled": settings().legacy_agent_keys_enabled,
         "retention_days": settings().retention_days,
         "max_retries": settings().max_retries,
         "configuration_updates": "operator-managed environment; no arbitrary remote config or secret edits",

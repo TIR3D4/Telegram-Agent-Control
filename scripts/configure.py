@@ -24,6 +24,7 @@ def main():
         "TAC_OWNER_KEY": secrets.token_urlsafe(40),
         "TAC_AGENT_KEY": secrets.token_urlsafe(40),
         "TAC_READER_KEY": secrets.token_urlsafe(40),
+        "TAC_LEGACY_AGENT_KEYS_ENABLED": "false",
         "TAC_WEBHOOK_SECRET": secrets.token_urlsafe(40),
         "TAC_ALLOWED_CHATS": chats,
         "TAC_DB_PASSWORD": password,

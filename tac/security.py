@@ -69,6 +69,8 @@ def authenticate(token, *, meter=True):
         ("agent", settings().agent_key),
         ("reader", settings().reader_key),
     ]:
+        if role != "owner" and not settings().legacy_agent_keys_enabled:
+            continue
         if secret.get_secret_value() and hmac.compare_digest(token, secret.get_secret_value()):
             return Identity(
                 role,
