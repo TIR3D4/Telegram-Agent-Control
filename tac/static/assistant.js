@@ -28,13 +28,15 @@ async function pollTurn(id) {
   if (old) old.replaceWith(renderTurn(t));
   if (["queued","running"].includes(t.status)) chatTimer=setTimeout(()=>act(()=>pollTurn(id)),1500);
   else { chatState.current=null; if(t.status==="succeeded") chatState.parent=t.id; }
-  const send = $("#chat-send"); if(send) send.disabled=!!chatState.current;
+  const send = $("#chat-send"); if(send) send.disabled=!!chatState.current||paused;
 }
 pages.assistant = async () => {
   clearTimeout(chatTimer);
   if(role!=="owner") {content.innerHTML='<p class="card" dir="rtl">ورود مستقل مالک لازم است.</p>';return;}
-  const [c, turns] = await Promise.all([api("assistant/config"),api("assistant/turns")]);
+  const [c, turns, system] = await Promise.all([api("assistant/config"),api("assistant/turns"),api("system")]);
+  paused=!!system.paused.enabled;
   content.innerHTML=`<section class="assistant" dir="rtl" lang="fa">
+    ${paused?`<section class="card"><p>اجرای سرور متوقف است. ابتدا عملیات قبلی و نتیجهٔ ارتقا را بررسی کنید؛ گفتگو در حالت توقف اجرا نمی‌شود.</p><button id="chat-resume">ادامهٔ اجرا پس از بررسی مالک</button></section>`:""}
     <p class="card">با دستیار گفتگو کنید. ارسال و تغییر Telegram فقط بعد از بررسی و تأیید شما انجام می‌شود.</p>
     <details class="card" ${c.configured?"":"open"}><summary>تنظیم مدل و ارائه‌دهنده</summary>
       <p>${esc(c.cost_notice)}</p><p>کلید را فقط در این فرم وارد کنید؛ آن را در گفتگو ننویسید. کلید ذخیره‌شده نمایش داده نمی‌شود.</p>
@@ -58,7 +60,8 @@ pages.assistant = async () => {
   for(const t of [...turns].reverse()) history.append(renderTurn(t));
   chatState.current=turns.find(t=>["queued","running"].includes(t.status))?.id||null;
   chatState.parent=turns.find(t=>t.status==="succeeded")?.id||null;
-  $("#chat-send").disabled=!!chatState.current||!c.configured;
+  $("#chat-send").disabled=!!chatState.current||!c.configured||paused;
+  if($("#chat-resume")) $("#chat-resume").onclick=()=>act(async()=>{if(!confirm("پس از بررسی عملیات صف، اجرای سرور را ادامه می‌دهید؟"))return;await api("system/pause?enabled=false","POST");await pages.assistant();});
   $("#chat-config").onsubmit=e=>{e.preventDefault();act(async()=>{
     const secret=$("#chat-key").value; $("#chat-key").value="";
     await api("assistant/config","PUT",{provider:$("#chat-provider").value,model:$("#chat-model").value,

@@ -210,3 +210,27 @@ test("Persian assistant on an iPhone viewport keeps secrets private and renders 
   await page.getByRole('button',{name:'توقف گفتگو',exact:true}).last().click();
   await expect(page.locator('.chat-state').last()).toHaveText('لغو شد');
 });
+
+test("phone owner explicitly reviews and resumes a paused server from chat", async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  await page.locator('#username').fill('ui-owner');
+  await page.locator('#password').fill('ui-password-for-tests');
+  await page.locator('#password-form button').click();
+  await expect(page.locator('#content')).toBeVisible();
+  await page.evaluate(async()=>{
+    const s=await (await fetch('/v1/session')).json();
+    const r=await fetch('/v1/system/pause?enabled=true',{method:'POST',headers:{'X-CSRF-Token':s.csrf}});
+    if(!r.ok)throw Error('Pause failed');
+  });
+  await page.locator('[data-view="assistant"]').click();
+  await expect(page.locator('#chat-send')).toBeDisabled();
+  await expect(page.locator('#chat-resume')).toBeVisible();
+  page.once('dialog',d=>d.dismiss());
+  await page.locator('#chat-resume').click();
+  await expect(page.locator('#chat-send')).toBeDisabled();
+  page.once('dialog',d=>d.accept());
+  await page.locator('#chat-resume').click();
+  await expect(page.locator('#chat-resume')).toHaveCount(0);
+  await expect(page.locator('#chat-send')).toBeEnabled();
+});

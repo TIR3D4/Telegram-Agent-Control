@@ -7,7 +7,7 @@ Baseline: `1dd50cf3271bfe01e24300aa8a53c173a47d4389`. Candidate: `engineering/mo
 | Command / check | Actual result |
 |---|---|
 | `.venv/bin/python -m pytest -q` | **509 passed, 4 skipped**. Three existing PostgreSQL-only tests and one new chat row-lock test skipped on local SQLite. |
-| `npm test -- --project=chromium` | **5 passed**. Includes 390×844 Persian chat, session reload, persisted queue/cancel, secret-free config response, escaped HTML and no horizontal overflow. |
+| `npm test -- --project=chromium` | **6 passed**. Includes 390×844 Persian chat, session reload, persisted queue/cancel, secret-free config response, escaped HTML and no horizontal overflow. |
 | `ruff check tac scripts tests` and `ruff format --check tac scripts tests` | Passed. |
 | `mypy --follow-imports=silent --ignore-missing-imports tac/gateway.py tac/oauth.py tac/security.py tac/body_limit.py tac/observability.py` | Passed (5 modules). Does not claim all-module typing. |
 | `bandit -q -r tac scripts -ll` | Passed. |
