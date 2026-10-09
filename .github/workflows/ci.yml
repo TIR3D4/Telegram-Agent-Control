@@ -18,7 +18,7 @@ jobs:
           POSTGRES_PASSWORD: ci-test-only
         ports: ['5432:5432']
         options: >-
-          --health-cmd 'pg_isready -U tac -d tac_test'
+          --health-cmd "pg_isready -U tac -d tac_test"
           --health-interval 5s --health-timeout 3s --health-retries 15
     steps:
       - uses: actions/checkout@v4
