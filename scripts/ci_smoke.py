@@ -44,6 +44,18 @@ try:
         headers={"Authorization": "Bearer " + owner},
     ) as c:
         ready(c)
+        assistant_config = c.put(
+            "/v1/assistant/config",
+            json={
+                "provider": "openai",
+                "model": "ci-mock-model",
+                "api_key": "sk-ci-fake-never-a-live-key-12345",
+                "channels": ["@ci_test"],
+            },
+        )
+        assistant_config.raise_for_status()
+        grant_id = assistant_config.json()["grant_id"]
+        assert "sk-ci-fake" not in assistant_config.text
         content = b"Backup and restore fixture; not sent to Telegram."
         response = c.post("/v1/assets", files={"file": ("fixture.txt", content, "text/plain")})
         response.raise_for_status()
@@ -69,6 +81,20 @@ try:
         assert ready(c)["paused"]["enabled"] is True
         assert c.get("/v1/operations/" + operation["id"]).json()["status"] == "draft"
         assert c.get("/v1/assets/" + asset_id).content == content
+        assert c.get("/v1/assistant/config").json()["grant_id"] == grant_id
+        subprocess.run(
+            [
+                "docker",
+                "compose",
+                "exec",
+                "-T",
+                "api",
+                "python",
+                "-c",
+                "from tac.assistant import config,unlock; assert unlock(config()['provider_secret']) == 'sk-ci-fake-never-a-live-key-12345'",
+            ],
+            check=True,
+        )
         subprocess.run(["./scripts/tacctl", "uninstall"], check=True)
         subprocess.run(["./scripts/tacctl", "start"], check=True)
         assert ready(c)["paused"]["enabled"] is True
