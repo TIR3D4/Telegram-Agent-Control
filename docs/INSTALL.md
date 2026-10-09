@@ -12,7 +12,7 @@ cd Telegram-Agent-Control
 ./scripts/install.sh
 ```
 
-The bootstrap can offer [Docker's official convenience installer](https://docs.docker.com/engine/install/). For managed hosts install Docker from its official distribution-specific repository first. Setup never replaces an existing `.env`.
+The bootstrap can offer [Docker's official convenience installer](https://docs.docker.com/engine/install/). For managed hosts install Docker from its official distribution-specific repository first. Setup preserves existing secrets and adds managed login/OAuth settings to an existing `.env` without regenerating unrelated keys. Upgrades back up that file before changes.
 
 ## Configuration
 

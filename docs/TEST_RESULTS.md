@@ -8,6 +8,14 @@
 - A disposable Keycloak **26.8.0** instance successfully ran realm/user/scope/audience provisioning twice and created an OAuth client using the restricted realm service account. A real browser Authorization Code + PKCE S256 flow and confidential token exchange also returned HTTP 200 with the expected subject, scopes and `/mcp` audience. This used local H2 development storage, not the deployment PostgreSQL/Compose stack.
 - No live Telegram messages were sent. Production VPS deployment and actual ChatGPT mobile linking are **not verified** by these tests. The deployment command must be run on the VPS; the cloud connection must be registered in ChatGPT.
 
+Full CI for code commit `5e2fb0166e0e050a22d41420615ee8cfa8c6a25a` passed in
+[run 38001596955](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/38001596955):
+SQLite **491 passed, 3 skipped**; PostgreSQL **494 passed**; browser **4 passed**;
+migration roundtrip, dependency audit, Docker build and Compose backup/restore/
+rollback smoke all passed. This validates the application stack; managed OAuth
+provisioning was verified separately against the disposable Keycloak instance
+as described above, not against the production VPS.
+
 Previous release evidence below remains scoped to its stated commits.
 
 

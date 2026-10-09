@@ -42,7 +42,7 @@ cd Telegram-Agent-Control
 ./scripts/install.sh
 ```
 
-The installer prompts for the bot token without echoing it, allowed destinations and an optional HTTPS hostname. It generates bootstrap secrets in a local `.env` with mode `0600`, disables legacy shared agent keys on fresh installs, builds the app, migrates PostgreSQL and starts the API and worker. Docker can be installed through the official installer after an explicit terminal prompt.
+The installer prompts for the bot token without echoing it, allowed destinations and an optional HTTPS hostname. It generates bootstrap secrets in a local `.env` with mode `0600`, disables legacy shared agent keys on fresh installs, builds the app, migrates PostgreSQL and starts the API and worker. It then asks for your console username/password once and configures managed OAuth when an HTTPS domain is set. Docker can be installed through the official installer after an explicit terminal prompt.
 
 With a configured domain and working DNS, use `https://your-domain`. Without a domain the console binds to `127.0.0.1:8787`; connect with an SSH tunnel:
 
@@ -50,7 +50,7 @@ With a configured domain and working DNS, use `https://your-domain`. Without a d
 ssh -L 8787:127.0.0.1:8787 user@your-server
 ```
 
-Open `http://127.0.0.1:8787` locally. Copy `TAC_OWNER_KEY` from `.env` privately into the console. The console keeps the key in tab memory only. Issue a finite scoped credential in **Agent permissions**. Start with `getMe` and `getChatMember`, then a **test channel**.
+Open your HTTPS domain (or `http://127.0.0.1:8787` locally) and sign in with your setup username/password. Open **Connect an AI** to choose REST or remote MCP and issue a finite scoped API credential in **Agent permissions**. The owner key is retained only as a private recovery/advanced credential. Start with `getMe` and `getChatMember`, then a **test channel**.
 
 <details>
 <summary>Console screenshot (v0.1 local test workspace; current screenshots are CI artifacts)</summary>
