@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./data/tac.sqlite"
     bot_token: SecretStr = SecretStr("")
     owner_key: SecretStr = SecretStr("")
+    owner_username: str = "owner"
+    owner_password_hash: SecretStr = SecretStr("")
+    oauth_admin_client_id: str = "tac-console"
+    oauth_admin_client_secret: SecretStr = SecretStr("")
     agent_key: SecretStr = SecretStr("")
     legacy_agent_keys_enabled: bool = True
     reader_key: SecretStr = SecretStr("")
@@ -25,6 +29,7 @@ class Settings(BaseSettings):
 
     approval_ttl_seconds: int = 3600
     approval_max_days: int = 30
+    owner_oauth_subject: str = ""
     oauth_issuer: str = ""
     oauth_jwks_url: str = ""
     oauth_audience: str = ""

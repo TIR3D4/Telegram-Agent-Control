@@ -1,5 +1,8 @@
 # Connect ChatGPT
 
+For the automated web setup and separate REST/MCP paths, start with [CONNECTIONS.md](CONNECTIONS.md).
+
+
 Status: resource-server authentication and protocol behavior are covered by automated tests. **No live ChatGPT account linking has been completed for this release.** Account/workspace permissions, available connector/app UI and tool behavior depend on the current client.
 
 1. Provide a publicly reachable HTTPS `/mcp/` endpoint with a valid certificate. A cloud client cannot reach your VPS's localhost or SSH tunnel.

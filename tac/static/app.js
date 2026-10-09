@@ -1,4 +1,5 @@
 "use strict";
+let csrf = "";
 let key = "",
   role = "",
   view = "overview",
@@ -35,7 +36,8 @@ async function api(path, method = "GET", body) {
   const r = await fetch("/v1/" + path, {
     method,
     headers: {
-      Authorization: "Bearer " + key,
+      ...(key ? { Authorization: "Bearer " + key } : {}),
+      ...(csrf ? { "X-CSRF-Token": csrf } : {}),
       ...(body instanceof FormData
         ? {}
         : { "Content-Type": "application/json" }),
@@ -84,7 +86,7 @@ function btn(text, fn, style = "") {
   return b;
 }
 async function load() {
-  if (!key) return;
+  if (!key && !csrf) return;
   $("#title").textContent = titles[view];
   document
     .querySelectorAll("nav button")
@@ -104,12 +106,43 @@ $("#login-form").onsubmit = (e) => {
     await load();
   });
 };
-$("#disconnect").onclick = () => {
-  key = "";
+async function connected() {
+  const s = await api("system");
+  role = s.role;
+  $("#login").hidden = true;
+  content.hidden = false;
+  $("#connection").textContent = "● Connected · " + role;
+  await load();
+}
+$("#password-form").onsubmit = (e) => {
+  e.preventDefault();
+  act(async () => {
+    key = "";
+    const result = await api("session", "POST", {
+      username: $("#username").value, password: $("#password").value,
+    });
+    $("#password").value = "";
+    csrf = result.csrf;
+    await connected();
+  });
+};
+$("#disconnect").onclick = () => act(async () => {
+  if (csrf) await api("session", "DELETE");
+  key = ""; csrf = ""; role = "";
+  content.innerHTML = "";
+  $("#detail-body").innerHTML = "";
+  $("#detail").close();
   content.hidden = true;
   $("#login").hidden = false;
   $("#connection").textContent = "● Disconnected";
-};
+});
+window.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const session = await api("session");
+    csrf = session.csrf;
+    await connected();
+  } catch { /* Signed out, or server unavailable: keep the login form visible. */ }
+});
 $("#refresh").onclick = () => act(load);
 $("#nav").onclick = (e) => {
   if (e.target.dataset.view) {

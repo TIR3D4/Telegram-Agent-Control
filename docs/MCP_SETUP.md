@@ -1,5 +1,8 @@
 # MCP setup
 
+For the automated web setup and separate REST/MCP paths, start with [CONNECTIONS.md](CONNECTIONS.md).
+
+
 This server uses the official Python MCP SDK (locked dependency version in `requirements.lock`), stateless Streamable HTTP with JSON responses, and stdio. Canonical remote endpoint: `https://your-domain/mcp/`. The OAuth resource identifier is `https://your-domain/mcp` (no trailing slash).
 
 1. Install and configure HTTPS and `TAC_PUBLIC_URL` correctly.

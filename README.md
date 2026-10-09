@@ -1,5 +1,8 @@
 <p align="center"><img src="docs/assets/banner.png" alt="Telegram Agent Control — Publish. Schedule. Automate." width="100%"></p>
 
+**Phone + desktop console:** sign in with your setup username/password, create scoped API keys in the web UI, or configure remote MCP OAuth. See [one setup, REST and MCP](docs/CONNECTIONS.md). A ChatGPT ZIP marked Desktop only still needs a registered cloud MCP connection; the server does not require Windows.
+
+
 <p align="center">
   <a href="https://github.com/TIR3D4/Telegram-Agent-Control/actions/workflows/ci.yml"><img src="https://github.com/TIR3D4/Telegram-Agent-Control/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/Python-3.12+-3776AB" alt="Python 3.12+">

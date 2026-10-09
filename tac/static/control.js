@@ -275,3 +275,67 @@ $("#close-detail").onclick = () => {
   $("#detail").close();
   $("#detail-body").replaceChildren();
 };
+
+// The same remote server supports HTTP agents and MCP clients on any OS.
+titles.connections = "Connect an AI / اتصال هوش مصنوعی";
+pages.connections = async function () {
+  if (role !== "owner") {
+    content.innerHTML = '<div class="card">Owner access required.</div>';
+    return;
+  }
+  const c = await api("connections");
+  content.innerHTML = `<div class="card"><h2>API · بدون پلاگین</h2>
+    <p dir="rtl">کلید محدود بسازید و همراه لینک API و راهنما در ابزار اتصال هوش مصنوعی وارد کنید. سرویس هوش مصنوعی باید امکان اجرای درخواست HTTP داشته باشد.</p>
+    <label>API URL</label><input readonly value="${esc(c.api_url)}">
+    <p><a href="${esc(c.agent_guide_url)}" target="_blank">Agent guide</a> · <a href="${esc(c.openapi_url)}" target="_blank">OpenAPI</a> · <a href="${esc(c.docs_url)}" target="_blank">API reference</a></p>
+    <button id="new-api-key" class="primary">Create API key / ساخت کلید API</button>
+    <label>Instruction to give your AI (add the scoped key in its secret store)</label>
+    <textarea id="agent-instruction" rows="5" readonly></textarea><button id="copy-instruction">Copy instruction</button></div>
+    <div class="card"><h2>MCP · اتصال از راه دور</h2>
+    <label>Streamable HTTP URL</label><input readonly value="${esc(c.mcp_url)}">
+    <p dir="rtl">برای ChatGPT از Add custom MCP server استفاده کنید. فایل ZIP تنها ممکن است Desktop only باشد. گوشی به اتصال ابری ثبت‌شده نیاز دارد؛ تغییر تنظیمات سرور به‌تنهایی این برچسب را برنمی‌دارد.</p>
+    <p>Clients supporting Bearer authentication can use the scoped API key directly with this MCP URL.</p>
+    <p>OAuth: ${c.managed_oauth ? "Ready for client setup" : "Run scripts/tacctl setup once to configure managed OAuth"}</p>
+    <form id="oauth-client-form"><label for="oauth-client-name">Connection name</label><input id="oauth-client-name" required maxlength="80" value="My AI connection">
+    <label for="oauth-callback">Exact OAuth callback URL shown by your AI host</label><input id="oauth-callback" type="url" required placeholder="https://...">
+    <button class="primary" ${c.managed_oauth ? "" : "disabled"}>Create OAuth connection / ساخت اتصال</button></form>
+    <button id="oauth-grant">Manage OAuth permissions</button>
+    <details><summary>Plugin package for an existing registered connection</summary>
+    <p>After registering the remote server in ChatGPT, paste its technical plugin_asdk_app ID. This form packages that existing connection; it cannot register it or verify its ownership.</p>
+    <label for="registered-app-id">Registered App ID</label><input id="registered-app-id" placeholder="plugin_asdk_app_...">
+    <button id="download-cloud-plugin">Download cloud connection bundle</button></details>
+    <p dir="rtl">رمز ورود پنل را به هوش مصنوعی ندهید. ایجاد درخواست، ارسال موفق نیست؛ تأیید نهایی در همین پنل انجام می‌شود.</p></div>`;
+  $("#agent-instruction").value = `Use Telegram Agent Control at ${c.api_url}. Read ${c.agent_guide_url} and ${c.openapi_url}. Authenticate with the scoped Bearer credential supplied separately. Inspect capabilities before acting. Create drafts with stable idempotency keys; ask me to approve them in the web console. Poll status and never report delivery before confirmation. Never retry an uncertain send automatically.`;
+  $("#copy-instruction").onclick = () => act(async () => {
+    await navigator.clipboard.writeText($("#agent-instruction").value);
+    notice("Copied / کپی شد");
+  });
+  $("#new-api-key").onclick = () => act(async () => { view = "agents"; await load(); });
+  $("#oauth-grant").onclick = () => act(async () => {
+    view = "agents"; await load();
+    $("#grant-subject").value = c.oauth_subject || "";
+    notice("Inspect existing OAuth grants before creating another. Expired/revoked grants must be reviewed through maintenance.");
+  });
+  $("#download-cloud-plugin").onclick = () => act(async () => {
+    const id = $("#registered-app-id").value.trim();
+    if (!id) throw Error("Register the remote MCP server first and paste its technical App ID.");
+    const response = await fetch("/v1/connections/plugin", {
+      method: "POST", headers: { "Content-Type": "application/json",
+        ...(key ? { Authorization: "Bearer " + key } : {}), ...(csrf ? { "X-CSRF-Token": csrf } : {}) },
+      body: JSON.stringify({ app_id: id }),
+    });
+    if (!response.ok) throw Error((await response.json()).detail || "Package failed");
+    const url = URL.createObjectURL(await response.blob());
+    const a = document.createElement("a"); a.href = url; a.download = "telegram-control.zip"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+  $("#oauth-client-form").onsubmit = (e) => {
+    e.preventDefault();
+    act(async () => {
+      const result = await api("connections/oauth-clients", "POST", {
+        name: $("#oauth-client-name").value, redirect_uri: $("#oauth-callback").value,
+      });
+      showJSON("OAuth connection — save the client secret privately", result);
+    });
+  };
+};

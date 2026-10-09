@@ -55,3 +55,8 @@ Set the webhook using an owner-approved `setWebhook` operation with the HTTPS UR
 ## Local source development
 
 Create a virtual environment and install `requirements.lock`, then `pip install --no-deps -e .`. Set owner/agent keys in environment. `alembic upgrade head` creates the SQLite development database. Run `tac serve` and `tac worker` separately. Never run multiple workers on SQLite.
+
+
+## Password login, mobile console and automated OAuth
+
+See [CONNECTIONS.md](CONNECTIONS.md) for the current setup/update flow. The owner key remains a private recovery credential; normal browser use is username/password.

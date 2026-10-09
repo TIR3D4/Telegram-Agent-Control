@@ -1,5 +1,8 @@
 # REST API reference
 
+For the automated web setup and separate REST/MCP paths, start with [CONNECTIONS.md](CONNECTIONS.md).
+
+
 Prefix: **`/v1`**, preserved for existing clients. `/api/v1` is not implemented. Live request schemas and route inventory: `/openapi.json`, `/docs`, `/redoc`. Use `Authorization: Bearer <scoped credential>` over HTTPS. Only liveness/readiness, static console, discovery and OpenAPI are intentionally unauthenticated; protected-resource discovery is available only when OAuth is configured.
 
 The [MCP tool contract](AGENT_TOOLS.md) describes shared effects, policy, errors and retry semantics. Both transports use the same operation/authorization services. No HTTP endpoint interprets arbitrary shell or SQL.

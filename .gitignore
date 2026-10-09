@@ -20,3 +20,8 @@ playwright-report/
 
 .mypy_cache/
 .security-reports/
+
+.oauth*.env
+compose.override.yaml
+Caddyfile.backup-*
+Caddyfile.before-*

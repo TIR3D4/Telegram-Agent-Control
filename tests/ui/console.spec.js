@@ -7,6 +7,7 @@ test("owner can inspect console and create a scheduled draft without publishing"
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
   await expect(page).toHaveTitle("Telegram Agent Control");
+  await page.locator("#login summary").click();
   await page.locator("#key").fill(owner);
   await page.locator("#login-form button").click();
   await expect(page.locator(".hero")).toBeVisible();
@@ -80,6 +81,7 @@ test("owner creates scoped credential, validates buttons and revokes through app
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/");
+  await page.locator("#login summary").click();
   await page.locator("#key").fill(owner);
   await page.locator("#login-form button").click();
   await page.locator('[data-view="agents"]').click();
@@ -149,4 +151,29 @@ test("owner creates scoped credential, validates buttons and revokes through app
     (await request.get("/v1/system", { headers: authorization })).status(),
   ).toBe(401);
   expect(errors).toEqual([]);
+});
+
+
+test("mobile password login, connection discovery, key creation and logout", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.locator("#username").fill("ui-owner");
+  await page.locator("#password").fill("ui-password-for-tests");
+  await page.locator("#password-form button").click();
+  await expect(page.locator("#content")).toBeVisible();
+  await page.reload();
+  await expect(page.locator("#content")).toBeVisible();
+  await page.locator('[data-view="connections"]').click();
+  await expect(page.locator("#agent-instruction")).toHaveValue(/agent-guide/);
+  await page.screenshot({ path: "test-results/mobile-connections.png", fullPage: true });
+  await page.locator("#new-api-key").click();
+  await page.locator("#grant-name").fill("Mobile API assistant");
+  await page.locator("#grant-create").click();
+  await page.getByRole("button", { name: "Create this grant", exact: true }).click();
+  await expect(page.locator("#detail-body")).toContainText("tac_");
+  await page.locator("#close-detail").click();
+  await page.locator("#disconnect").click();
+  await page.reload();
+  await expect(page.locator("#password-form")).toBeVisible();
+  await expect(page.locator("#content")).toBeHidden();
 });

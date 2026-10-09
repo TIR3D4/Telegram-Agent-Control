@@ -472,3 +472,15 @@ aside {
     grid-template-columns: 1fr;
   }
 }
+
+#password-form { display: grid; gap: 12px; max-width: 480px; }
+#login details { margin-top: 24px; }
+@media (max-width: 760px) {
+  .aside-foot { display: flex; flex-wrap: wrap; gap: 12px; padding: 12px; }
+  input, textarea, select { font-size: 16px; max-width: 100%; }
+  pre { overflow-wrap: anywhere; white-space: pre-wrap; }
+}
+@media (max-width: 760px) {
+  header { flex-direction: column; gap: 14px; }
+  header h1 { overflow-wrap: anywhere; }
+}

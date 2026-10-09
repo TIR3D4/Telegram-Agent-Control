@@ -133,9 +133,14 @@ def route_scope(path, verb):
 
 def principal(request: Request, auth: HTTPAuthorizationCredentials | None = Depends(bearer)):
     try:
-        if not auth:
-            raise HTTPException(401, "Valid bearer credential required")
-        who = authenticate(auth.credentials)
+        if auth:
+            who = authenticate(auth.credentials)
+        else:
+            if request.headers.get("Authorization"):
+                raise HTTPException(401, "Invalid authorization header")
+            from .web_auth import session_identity
+
+            who = session_identity(request)
         request.state.actor = str(who)
         scope = route_scope(request.url.path, request.method)
         if scope == "human" and not who.human:

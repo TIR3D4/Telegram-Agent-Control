@@ -11,3 +11,8 @@ __pycache__
 node_modules
 test-results
 playwright-report
+
+.oauth*.env
+compose.override.yaml
+Caddyfile.backup-*
+Caddyfile.before-*

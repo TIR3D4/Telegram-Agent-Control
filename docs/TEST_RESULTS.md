@@ -1,5 +1,16 @@
 # Test results — 2026-10-09
 
+## v0.3 connection update (local verification)
+
+- SQLite suite: **491 passed, 3 skipped** (PostgreSQL-only cases skipped locally).
+- Playwright: **4 passed**, including 390×844 phone viewport password login, session reload, connection discovery, API key creation and logout; desktop and MCP behavior also covered.
+- Ruff lint/format, focused mypy, Bandit medium/high, shell/JavaScript syntax and diff whitespace checks passed.
+- A disposable Keycloak **26.8.0** instance successfully ran realm/user/scope/audience provisioning twice and created an OAuth client using the restricted realm service account. A real browser Authorization Code + PKCE S256 flow and confidential token exchange also returned HTTP 200 with the expected subject, scopes and `/mcp` audience. This used local H2 development storage, not the deployment PostgreSQL/Compose stack.
+- No live Telegram messages were sent. Production VPS deployment and actual ChatGPT mobile linking are **not verified** by these tests. The deployment command must be run on the VPS; the cloud connection must be registered in ChatGPT.
+
+Previous release evidence below remains scoped to its stated commits.
+
+
 Evidence applies to the indicated revision/environment, not every possible deployment. No live Telegram sends, production credentials, external OAuth account linking or VPS deployment were performed.
 
 ## Full CI evidence

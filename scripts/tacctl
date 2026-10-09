@@ -23,6 +23,7 @@ case "$command" in
   need_docker
   python3 scripts/configure.py
   compose up -d --build
+  python3 scripts/setup_access.py
   compose ps
   printf '%s\n' 'Console: configured HTTPS domain or http://127.0.0.1:8787' 'Run scripts/tacctl doctor to verify readiness.'
   ;;
@@ -38,17 +39,13 @@ case "$command" in
   compose exec -T api python -c "from tac.config import settings; settings().check(); print('Configuration valid')"
   compose exec -T api curl -fsS http://localhost:8787/health/ready
   ;;
+ setup)
+  need_docker
+  python3 scripts/setup_access.py "${@:2}"
+  ;;
  update)
   need_docker
-  if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then printf '%s\n' 'Commit or stash tracked changes before update.'; exit 1; fi
-  backup
-  git pull --ff-only
-  compose build
-  compose stop api worker
-  compose run --rm migrate
-  compose run --rm --no-deps -T api python -m tac.maintenance pause-upgrade
-  compose up -d
-  compose ps
+  python3 scripts/upgrade.py
   ;;
  backup) need_docker; backup ;;
  restore)
@@ -109,5 +106,5 @@ case "$command" in
     [[ -n "$item" ]] && exec "$0" "$item"
   done
   ;;
- *) printf '%s\n' 'Usage: tacctl {install|start|stop|restart|status|logs|doctor|config|update|backup|verify-backup|restore|restore-request|rollback|credentials|uninstall|purge|menu}'; exit 2 ;;
+ *) printf '%s\n' 'Usage: tacctl {install|setup|start|stop|restart|status|logs|doctor|config|update|backup|verify-backup|restore|restore-request|rollback|credentials|uninstall|purge|menu}'; exit 2 ;;
 esac

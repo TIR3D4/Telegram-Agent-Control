@@ -8,7 +8,11 @@ Run an upgrade first on a staging copy with no live bot credential. Read the cha
 ./scripts/tacctl update
 ```
 
-`update` refuses tracked local modifications, makes a backup, fast-forwards the current tracked branch, builds, stops API/worker, applies Alembic migrations and starts with execution **paused**. It does not merge divergent branches or deploy from model-generated commands. A build failure leaves the old running installation intact; a migration failure leaves execution stopped for operator investigation. Inspect logs and schema revision before resuming from the owner console.
+Version 0.3 uses the backed-up updater described in [CONNECTIONS.md](CONNECTIONS.md).
+It accepts the exact known manual OAuth Caddy/ignore changes and preserves other
+local edits by stopping for review. It verifies the deployment branch and ancestry,
+backs up application data plus provider/configuration, builds and migrates, then
+leaves execution paused. Existing grants and provider identities are preserved.
 
 For an existing v0.1 installation, back up using the old version before checking out the v0.2 branch. Once the new source is checked out, stop API/worker, build and run `docker compose run --rm migrate`, then `docker compose run --rm --no-deps -T api python -m tac.maintenance pause-upgrade`, then `docker compose up -d`. Do not switch binaries while old workers are still processing.
 
