@@ -441,3 +441,46 @@ a {
     padding: 17px;
   }
 }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+fieldset {
+  border: 1px solid #344155;
+  border-radius: 12px;
+  padding: 18px;
+  margin: 18px 0;
+}
+legend {
+  padding: 0 8px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #65b9ff;
+  outline-offset: 3px;
+}
+aside {
+  overflow-y: auto;
+}
+@media (max-width: 760px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#password-form { display: grid; gap: 12px; max-width: 480px; }
+#login details { margin-top: 24px; }
+@media (max-width: 760px) {
+  .aside-foot { display: flex; flex-wrap: wrap; gap: 12px; padding: 12px; }
+  input, textarea, select { font-size: 16px; max-width: 100%; }
+  pre { overflow-wrap: anywhere; white-space: pre-wrap; }
+}
+@media (max-width: 760px) {
+  header { flex-direction: column; gap: 14px; }
+  header h1 { overflow-wrap: anywhere; }
+}

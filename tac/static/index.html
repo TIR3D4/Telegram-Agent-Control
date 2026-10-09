@@ -6,14 +6,15 @@
     <title>Telegram Agent Control</title>
     <link rel="stylesheet" href="/static/style.css" />
     <script defer src="/static/app.js"></script>
+    <script defer src="/static/control.js"></script>
   </head>
   <body>
     <aside>
       <a class="brand" href="/"
         >↗ <span>TELEGRAM<br /><b>AGENT CONTROL</b></span></a
       >
-      <div class="workspace">CONTROL PLANE <span>v0.1</span></div>
-      <nav id="nav">
+      <div class="workspace">CONTROL PLANE <span>v0.3</span></div>
+      <nav id="nav" aria-label="Workspace sections">
         <button data-view="overview" class="active">◉ Overview</button
         ><button data-view="operations">↗ Operations</button
         ><button data-view="compose">＋ Compose</button
@@ -22,6 +23,14 @@
         ><button data-view="methods">⌘ API explorer</button
         ><button data-view="logs">≡ Activity & logs</button
         ><button data-view="database">▤ Database</button>
+        <button data-view="channels">↗ Channels</button>
+        <button data-view="media">▣ Media library</button>
+        <button data-view="keyboards">⌨ Keyboards</button>
+        <button data-view="connections">☁ Connect an AI / اتصال هوش مصنوعی</button>
+        <button data-view="agents">⚿ Agent permissions</button>
+        <button data-view="diagnostics">◈ Health & metrics</button>
+        <button data-view="settings">⚙ Settings</button>
+        <button data-view="maintenance">✓ Maintenance approvals</button>
       </nav>
       <div class="aside-foot">
         <span id="connection">● Disconnected</span
@@ -41,20 +50,21 @@
         </div>
       </header>
       <section id="login" class="card">
-        <h2>Connect your workspace</h2>
-        <p>
-          Enter the owner, agent, or read-only key generated during
-          installation. It stays in this tab's memory.
-        </p>
-        <form id="login-form">
-          <input
-            id="key"
-            type="password"
-            placeholder="Access key"
-            autocomplete="off"
-            required
-          /><button class="primary">Connect</button>
+        <h2>Sign in / ورود</h2>
+        <p>Use the username and password chosen during setup. / با نام کاربری و رمز اولیه وارد شوید.</p>
+        <form id="password-form">
+          <label for="username">Username / نام کاربری</label>
+          <input id="username" autocomplete="username" required maxlength="120">
+          <label for="password">Password / رمز عبور</label>
+          <input id="password" type="password" autocomplete="current-password" required maxlength="1024">
+          <button class="primary">Sign in / ورود</button>
         </form>
+        <details><summary>Advanced: access key / ورود با کلید</summary>
+          <form id="login-form">
+            <input aria-label="Access credential" id="key" type="password" placeholder="Access key" autocomplete="off" required>
+            <button>Connect with key</button>
+          </form>
+        </details>
       </section>
       <div id="notice" role="status" hidden></div>
       <div id="content" hidden></div>

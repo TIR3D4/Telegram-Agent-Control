@@ -1,5 +1,5 @@
 FROM python:3.12-slim
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 TAC_LISTEN_HOST=0.0.0.0
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg libcairo2 curl && rm -rf /var/lib/apt/lists/* \
     && groupadd -g 10001 tac && useradd -u 10001 -g tac -m tac

@@ -1,0 +1,28 @@
+# Installed as compose.override.yaml by scripts/tacctl setup; secrets are generated once.
+services:
+  oauth-db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file: .oauth-db.env
+    volumes: [oauth_pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U keycloak -d keycloak']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+      options: {max-size: '10m', max-file: '3'}
+  oauth:
+    image: quay.io/keycloak/keycloak:26.8.0
+    restart: unless-stopped
+    command: [start]
+    env_file: .oauth.env
+    mem_limit: 1g
+    depends_on:
+      oauth-db: {condition: service_healthy}
+    logging:
+      driver: json-file
+      options: {max-size: '10m', max-file: '3'}
+volumes:
+  oauth_pgdata:

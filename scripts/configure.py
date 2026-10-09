@@ -24,6 +24,7 @@ def main():
         "TAC_OWNER_KEY": secrets.token_urlsafe(40),
         "TAC_AGENT_KEY": secrets.token_urlsafe(40),
         "TAC_READER_KEY": secrets.token_urlsafe(40),
+        "TAC_LEGACY_AGENT_KEYS_ENABLED": "false",
         "TAC_WEBHOOK_SECRET": secrets.token_urlsafe(40),
         "TAC_ALLOWED_CHATS": chats,
         "TAC_DB_PASSWORD": password,
@@ -40,7 +41,7 @@ def main():
     with os.fdopen(fd, "w") as f:
         for k, v in values.items():
             f.write(k + "=" + json.dumps(v) + "\n")
-    print("Configuration saved with mode 0600. Open .env privately to copy your owner key.")
+    print("Configuration saved. Setup will ask for your console username and password once.")
 
 
 if __name__ == "__main__":

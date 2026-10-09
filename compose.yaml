@@ -4,6 +4,7 @@ x-app: &app
   image: telegram-agent-control:local
   env_file: .env
   restart: unless-stopped
+  stop_grace_period: 60s
   volumes: [media:/data/media]
   depends_on:
     postgres:

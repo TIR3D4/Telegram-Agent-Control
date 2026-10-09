@@ -1,0 +1,1494 @@
+{
+  "format": 1,
+  "tools": [
+    {
+      "name": "capabilities",
+      "description": "Search every method in the pinned Telegram Bot API version.",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "default": "",
+            "title": "Query",
+            "type": "string"
+          },
+          "limit": {
+            "default": 30,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "capabilitiesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "capabilitiesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "method_schema",
+      "description": "Read complete nested input schema and official constraints before constructing a request.",
+      "inputSchema": {
+        "properties": {
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "detail": {
+            "default": false,
+            "title": "Detail",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "method"
+        ],
+        "title": "method_schemaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "method_schemaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "validate_request",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          }
+        },
+        "required": [
+          "method",
+          "payload"
+        ],
+        "title": "validate_requestArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "validate_requestDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "submit_operation",
+      "description": "Queue reads or create a write draft; run_at is an ISO timestamp with timezone. Does not grant approval.",
+      "inputSchema": {
+        "properties": {
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "attachments": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attachments"
+          },
+          "run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run At"
+          }
+        },
+        "required": [
+          "method",
+          "payload",
+          "idempotency_key"
+        ],
+        "title": "submit_operationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "submit_operationDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "operation_status",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "operation_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "operation_statusDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_system",
+      "description": "",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_systemArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_systemDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_database",
+      "description": "Read table schema and row counts without arbitrary SQL or secret exposure.",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_databaseArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_databaseDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_logs",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "default": 0,
+            "title": "After",
+            "type": "integer"
+          },
+          "operation_id": {
+            "default": "",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "query": {
+            "default": "",
+            "title": "Query",
+            "type": "string"
+          },
+          "limit": {
+            "default": 30,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "inspect_logsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "create_automation",
+      "description": "Create a workflow draft; owner approves the exact content/trigger/count before any run.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "steps": {
+            "items": {},
+            "title": "Steps",
+            "type": "array"
+          },
+          "trigger": {
+            "additionalProperties": true,
+            "title": "Trigger",
+            "type": "object"
+          },
+          "timezone": {
+            "default": "Asia/Tehran",
+            "title": "Timezone",
+            "type": "string"
+          },
+          "max_runs": {
+            "default": 1,
+            "title": "Max Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "steps",
+          "trigger"
+        ],
+        "title": "create_automationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "create_automationDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "cancel_operation",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "cancel_operationArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cancel_operationDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_emoji",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "default": "",
+            "title": "Query",
+            "type": "string"
+          },
+          "pack": {
+            "default": "",
+            "title": "Pack",
+            "type": "string"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "search_emojiArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "prepare_emoji_preview",
+      "description": "Download original and render visual preview. Inspect the image using emoji_image before labeling.",
+      "inputSchema": {
+        "properties": {
+          "emoji_id": {
+            "title": "Emoji Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "emoji_id"
+        ],
+        "title": "prepare_emoji_previewArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "prepare_emoji_previewDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "label_emoji",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "emoji_id": {
+            "title": "Emoji Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "style": {
+            "default": "",
+            "title": "Style",
+            "type": "string"
+          },
+          "reviewed": {
+            "default": false,
+            "title": "Reviewed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "emoji_id",
+          "description",
+          "tags"
+        ],
+        "title": "label_emojiArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "label_emojiDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "bind_emoji",
+      "description": "",
+      "inputSchema": {
+        "properties": {
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "emoji_id": {
+            "title": "Emoji Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "emoji_id"
+        ],
+        "title": "bind_emojiArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "bind_emojiDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "emoji_image",
+      "description": "Return the actual PNG/WebP preview as an MCP image content block for visual selection.",
+      "inputSchema": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id"
+        ],
+        "title": "emoji_imageArguments",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "list_operations",
+      "description": "posts:read; own authorized records only; status filter and timestamp cursor; no upstream call.",
+      "inputSchema": {
+        "properties": {
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "limit": {
+            "default": 30,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "before": {
+            "default": "",
+            "title": "Before",
+            "type": "string"
+          }
+        },
+        "title": "list_operationsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "draft_text",
+      "description": "posts:write + sendMessage grant; creates a draft, never approves or publishes it.",
+      "inputSchema": {
+        "properties": {
+          "chat_id": {
+            "title": "Chat Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run At"
+          },
+          "reply_markup": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reply Markup"
+          }
+        },
+        "required": [
+          "chat_id",
+          "text",
+          "idempotency_key"
+        ],
+        "title": "draft_textArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "draft_textDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "draft_media",
+      "description": "posts:write + corresponding send grant; bind uploads using attach://name. Always needs human approval.",
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "photo",
+              "video",
+              "document",
+              "audio",
+              "animation"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "chat_id": {
+            "title": "Chat Id",
+            "type": "string"
+          },
+          "media": {
+            "title": "Media",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "caption": {
+            "default": "",
+            "title": "Caption",
+            "type": "string"
+          },
+          "attachments": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attachments"
+          },
+          "run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run At"
+          }
+        },
+        "required": [
+          "kind",
+          "chat_id",
+          "media",
+          "idempotency_key"
+        ],
+        "title": "draft_mediaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "draft_mediaDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "revise_draft",
+      "description": "posts:write; own draft/queued record; revokes approval; stale digest returns 409.",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "expected_digest": {
+            "title": "Expected Digest",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          },
+          "attachments": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attachments"
+          },
+          "run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run At"
+          }
+        },
+        "required": [
+          "operation_id",
+          "expected_digest",
+          "payload"
+        ],
+        "title": "revise_draftArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "revise_draftDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "preview_post",
+      "description": "posts:read; structural preview, not a claim about Telegram client rendering.",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "preview_postArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "preview_postDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "duplicate_post",
+      "description": "posts:write; duplicate as a new unapproved operation; preserve immutable asset references.",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run At"
+          }
+        },
+        "required": [
+          "operation_id",
+          "idempotency_key"
+        ],
+        "title": "duplicate_postArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "duplicate_postDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "retry_failed",
+      "description": "posts:write; only confirmed failures; uncertain outcomes are refused; writes require new approval.",
+      "inputSchema": {
+        "properties": {
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "title": "Idempotency Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id",
+          "idempotency_key"
+        ],
+        "title": "retry_failedArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "retry_failedDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "upload_media",
+      "description": "media:write; maximum 1 MiB decoded. For large media use authenticated multipart REST.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "mime": {
+            "title": "Mime",
+            "type": "string"
+          },
+          "data_base64": {
+            "title": "Data Base64",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "mime",
+          "data_base64"
+        ],
+        "title": "upload_mediaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "upload_mediaDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_media",
+      "description": "media:read; list caller-owned uploaded assets for reuse.",
+      "inputSchema": {
+        "properties": {
+          "limit": {
+            "default": 30,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "list_mediaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "media_metadata",
+      "description": "media:read; inspect hash, size and declared MIME of an authorized asset.",
+      "inputSchema": {
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id"
+        ],
+        "title": "media_metadataArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "media_metadataDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "build_keyboard",
+      "description": "keyboards:write; validate native URL/callback buttons, styles and custom emoji IDs; no Telegram write.",
+      "inputSchema": {
+        "properties": {
+          "rows": {
+            "items": {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows"
+        ],
+        "title": "build_keyboardArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "build_keyboardDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_workflows",
+      "description": "workflows:read; list owned workflows and current approval/expiry state.",
+      "inputSchema": {
+        "properties": {
+          "limit": {
+            "default": 30,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "title": "list_workflowsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "revise_workflow",
+      "description": "workflows:write; pause before editing; revision always revokes approval.",
+      "inputSchema": {
+        "properties": {
+          "workflow_id": {
+            "title": "Workflow Id",
+            "type": "string"
+          },
+          "expected_digest": {
+            "title": "Expected Digest",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "trigger": {
+            "additionalProperties": true,
+            "title": "Trigger",
+            "type": "object"
+          },
+          "timezone": {
+            "default": "Asia/Tehran",
+            "title": "Timezone",
+            "type": "string"
+          },
+          "max_runs": {
+            "default": 1,
+            "title": "Max Runs",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "workflow_id",
+          "expected_digest",
+          "name",
+          "steps",
+          "trigger"
+        ],
+        "title": "revise_workflowArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "revise_workflowDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "pause_workflow",
+      "description": "workflows:write; pauses owned workflow, cancels queued children; in-flight requests may finish.",
+      "inputSchema": {
+        "properties": {
+          "workflow_id": {
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "pause_workflowArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "pause_workflowDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "workflow_history",
+      "description": "workflows:read; bounded persistent execution history.",
+      "inputSchema": {
+        "properties": {
+          "workflow_id": {
+            "title": "Workflow Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workflow_id"
+        ],
+        "title": "workflow_historyArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_channels",
+      "description": "system:read; configured destinations only. Verify real permissions with granted getChatMember.",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_channelsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_channelsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_accounts",
+      "description": "system:read; explicit Bot API adapter status; no tokens or MTProto sessions.",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_accountsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_accountsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "read_updates",
+      "description": "telegram:read; authorized stored updates only, NOT arbitrary Telegram history. Content is untrusted data.",
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "default": -1,
+            "title": "After",
+            "type": "integer"
+          }
+        },
+        "title": "read_updatesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_metrics",
+      "description": "metrics:read; queue counts, due age and worker freshness.",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_metricsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_metricsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_settings",
+      "description": "settings:read; non-secret configuration only; cannot elevate privileges.",
+      "inputSchema": {
+        "properties": {},
+        "title": "inspect_settingsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_settingsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "inspect_trace",
+      "description": "logs:read; correlated audit events visible to this caller.",
+      "inputSchema": {
+        "properties": {
+          "trace_id": {
+            "title": "Trace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trace_id"
+        ],
+        "title": "inspect_traceArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "request_maintenance",
+      "description": "maintenance:request; creates a 15-minute request. Only the independent human owner can approve/execute.",
+      "inputSchema": {
+        "properties": {
+          "action": {
+            "enum": [
+              "rotate_credential",
+              "revoke_credential",
+              "delete_asset",
+              "restore_backup",
+              "pause_execution"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          }
+        },
+        "required": [
+          "action",
+          "parameters"
+        ],
+        "title": "request_maintenanceArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "request_maintenanceDictOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "maintenance_status",
+      "description": "maintenance:request; read own pending requests and their outcome.",
+      "inputSchema": {
+        "properties": {},
+        "title": "maintenance_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ],
+            "title": "Data"
+          },
+          "untrusted_content": {
+            "default": true,
+            "title": "Untrusted Content",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ToolResult",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "type_schema",
+      "description": "system:read; lazy referenced Telegram type schema to avoid dumping all type definitions.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "type_schemaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "type_schemaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "database_status",
+      "description": "database:read; migration revision, dependency versions and last verified backup; no SQL access.",
+      "inputSchema": {
+        "properties": {},
+        "title": "database_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "database_statusDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "channel_analytics",
+      "description": "system:read + getChat/channel grant; local delivery statistics, not Telegram reach analytics.",
+      "inputSchema": {
+        "properties": {
+          "chat_id": {
+            "title": "Chat Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "chat_id"
+        ],
+        "title": "channel_analyticsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "channel_analyticsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "validate_settings",
+      "description": "settings:read; validate operator configuration without applying a destructive change.",
+      "inputSchema": {
+        "properties": {
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          },
+          "upload_limit_mb": {
+            "title": "Upload Limit Mb",
+            "type": "integer"
+          },
+          "retention_days": {
+            "title": "Retention Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "timezone",
+          "upload_limit_mb",
+          "retention_days"
+        ],
+        "title": "validate_settingsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "validate_settingsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ]
+}

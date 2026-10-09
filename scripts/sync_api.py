@@ -5,7 +5,7 @@ import argparse
 import hashlib
 import json
 import re
-import urllib.request
+import httpx
 from pathlib import Path
 from bs4 import BeautifulSoup
 
@@ -119,7 +119,12 @@ if __name__ == "__main__":
     p.add_argument("--html")
     p.add_argument("--output", default="tac/data/registry.json")
     a = p.parse_args()
-    html = Path(a.html).read_text() if a.html else urllib.request.urlopen(URL, timeout=30).read().decode()
+    if a.html:
+        html = Path(a.html).read_text()
+    else:
+        response = httpx.get(URL, timeout=30, follow_redirects=False)
+        response.raise_for_status()
+        html = response.text
     registry = build(html)
     Path(a.output).write_text(json.dumps(registry, ensure_ascii=False, indent=2) + "\n")
     print(

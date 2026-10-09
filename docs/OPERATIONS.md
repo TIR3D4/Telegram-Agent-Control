@@ -1,5 +1,7 @@
 # Operations and recovery
 
+Current detailed procedures: [upgrade/rollback](UPGRADE.md), [verified backup/restore](BACKUP_RESTORE.md), [observability](OBSERVABILITY.md).
+
 ## Persistence
 
 PostgreSQL stores operations and their approved hash, schedules/workflow definitions, occurrences, audit events, received Telegram updates, asset metadata, emoji labels and role bindings. Media files live in a separate volume and are referenced by immutable asset IDs. Alembic versions schema changes.
@@ -10,7 +12,7 @@ Production claims rely on PostgreSQL row locking with `SKIP LOCKED`. SQLite is a
 
 Application logs are JSON to stdout. Compose rotates API/worker logs at 10 MB with five files. Use `tacctl logs` for HTTP requests and errors, or the log collection of your choice. Persistent audit events are exposed by `/v1/logs` with ID cursor and action/resource filters. Operation errors and outcomes have their own records. `/v1/system` reports worker heartbeat, queue counts and pause state. `/v1/database/overview` provides schema and table counts.
 
-The audit API has no update/delete endpoint. This is application-level append-only behavior, not a tamper-proof or cryptographically signed ledger; a PostgreSQL administrator can alter records. Log/audit retention is operator-managed in this first release. Monitor disk growth before enabling large event feeds.
+The audit API has no update/delete endpoint. This is application-level append-only behavior, not a tamper-proof or cryptographically signed ledger; a PostgreSQL administrator can alter records. HTTP request audit retention is bounded by the configured window; domain evidence remains retained. See [observability](OBSERVABILITY.md). Monitor disk growth before enabling large event feeds.
 
 Secrets are loaded from environment and redacted from responses/logs. `.env` and backups are local private files. Sensitive Telegram content can still be present in database payloads and media: use encrypted VPS disks/backups where needed and limit access to the server. The service does not promise application-level encryption of every record.
 
