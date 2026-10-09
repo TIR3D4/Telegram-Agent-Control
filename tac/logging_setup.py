@@ -14,7 +14,18 @@ class Formatter(logging.Formatter):
             "logger": r.name,
             "event": r.getMessage(),
         }
-        for k in ("request_id", "operation_id", "status", "duration_ms", "method", "path", "error_type"):
+        for k in (
+            "request_id",
+            "trace_id",
+            "actor",
+            "tool",
+            "operation_id",
+            "status",
+            "duration_ms",
+            "method",
+            "path",
+            "error_type",
+        ):
             if hasattr(r, k):
                 data[k] = getattr(r, k)
         return json.dumps(redact(data), ensure_ascii=False)
@@ -27,5 +38,5 @@ def setup():
     root.handlers = [handler]
     root.setLevel(settings().log_level)
     # HTTP libraries would otherwise print Bot API URLs containing credentials.
-    for name in ("httpx", "httpcore", "httpcore2", "uvicorn.access"):
+    for name in ("httpx", "httpx2", "httpcore", "httpcore2", "uvicorn.access"):
         logging.getLogger(name).setLevel(logging.CRITICAL)

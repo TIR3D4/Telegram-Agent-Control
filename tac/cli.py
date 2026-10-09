@@ -12,7 +12,9 @@ def main():
     if a.command == "serve":
         import uvicorn
 
-        uvicorn.run("tac.api:app", host="0.0.0.0", port=8787, access_log=False)
+        uvicorn.run(
+            "tac.api:app", host=os.getenv("TAC_LISTEN_HOST", "127.0.0.1"), port=8787, access_log=False
+        )
         return
     if a.command == "worker":
         from .worker import run

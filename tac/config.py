@@ -22,12 +22,32 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     poll_interval: float = 1.0
 
+    approval_ttl_seconds: int = 3600
+    approval_max_days: int = 30
+    oauth_issuer: str = ""
+    oauth_jwks_url: str = ""
+    oauth_audience: str = ""
+    oauth_max_lifetime: int = 3600
+    retention_days: int = 90
+    worker_stale_seconds: int = 90
+    max_retries: int = 5
+    otel_enabled: bool = False
+
     def check(self):
         keys = [self.owner_key.get_secret_value(), self.agent_key.get_secret_value()]
         if any(len(x) < 32 for x in keys) or keys[0] == keys[1]:
             raise RuntimeError(
                 "Set different TAC_OWNER_KEY and TAC_AGENT_KEY (at least 32 characters). Run scripts/tacctl install."
             )
+
+        if self.oauth_issuer:
+            if not all(
+                x.startswith("https://")
+                for x in [self.oauth_issuer, self.oauth_jwks_url, self.oauth_audience, self.public_url]
+            ):
+                raise RuntimeError("OAuth issuer, JWKS, audience and public URL require HTTPS")
+            if self.oauth_audience != self.public_url.rstrip("/") + "/mcp":
+                raise RuntimeError("OAuth audience must be the canonical public /mcp resource URL")
 
     @property
     def chats(self):

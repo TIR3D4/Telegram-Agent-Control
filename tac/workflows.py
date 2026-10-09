@@ -1,9 +1,11 @@
+from fastapi import HTTPException
 import re
 from datetime import timedelta, datetime, timezone
 from zoneinfo import ZoneInfo
 from croniter import croniter
 from sqlalchemy import select
 from .db import Workflow, WorkflowRun, Operation, now, record
+from .gateway import execution_identity, authorize_steps
 from .operations import submit, utc
 from .registry import validate
 
@@ -84,13 +86,19 @@ def next_time(trigger, tz, after=None):
 
 
 def start_run(db, w, key):
-    if not w.active or w.approved_digest != w.digest or w.runs_count >= w.max_runs:
+    if (
+        not w.active
+        or w.approved_digest != w.digest
+        or w.runs_count >= w.max_runs
+        or not w.approved_until
+        or utc(w.approved_until) <= now()
+    ):
         return
     if db.scalar(
         select(WorkflowRun).where(WorkflowRun.workflow_id == w.id, WorkflowRun.occurrence_key == key)
     ):
         return
-    run = WorkflowRun(workflow_id=w.id, occurrence_key=key, steps=w.steps)
+    run = WorkflowRun(workflow_id=w.id, occurrence_key=key, steps=w.steps, actor=w.actor)
     db.add(run)
     db.flush()
     w.runs_count += 1
@@ -116,7 +124,7 @@ def tick(db):
     ).all()
     for run in runs:
         w = db.get(Workflow, run.workflow_id)
-        if not w or w.approved_digest != w.digest:
+        if not w or w.approved_digest != w.digest or not w.approved_until or utc(w.approved_until) <= now():
             run.status = "paused"
             continue
         ops = db.scalars(
@@ -132,6 +140,8 @@ def tick(db):
             continue
         step = run.steps[len(ops)]
         try:
+            actor = execution_identity(db, w.actor)
+            authorize_steps(actor, w.steps, w.trigger)
             payload = resolve(step["payload"], [o.result for o in ops])
             at = now() + timedelta(seconds=step.get("delay_seconds", 0))
             op = submit(
@@ -140,16 +150,17 @@ def tick(db):
                 payload,
                 step.get("attachments", {}),
                 f"workflow:{run.id}:{len(ops)}",
-                "workflow",
+                actor,
                 at,
             )
             op.workflow_run_id = run.id
             op.step_index = len(ops)
+            op.approved_until = w.approved_until
             op.approved_digest = op.digest
             op.approved_by = "workflow-owner-grant"
             op.status = "queued"
             run.cursor = len(ops)
-        except (ValueError, KeyError, IndexError, TypeError) as e:
+        except (ValueError, KeyError, IndexError, TypeError, HTTPException) as e:
             run.status = "failed"
             record(db, "scheduler", "workflow.invalid", run.id, {"error": str(e)})
 

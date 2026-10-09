@@ -1,8 +1,12 @@
+import signal
 import time
+import threading
 import logging
 from datetime import timedelta
 import httpx
 from sqlalchemy import select
+from fastapi import HTTPException
+from .gateway import execution_identity, authorize_method, utc, request_context
 from .db import Session, Operation, RuntimeState, now, record, uid
 from .registry import registry
 from .operations import check_target
@@ -54,14 +58,18 @@ def cycle(client=None):
         )
         if not op:
             return False
-        if registry()["methods"][op.method]["effect"] == "write" and op.approved_digest != op.digest:
+        if registry()["methods"][op.method]["effect"] == "write" and (
+            op.approved_digest != op.digest or not op.approved_until or utc(op.approved_until) <= now()
+        ):
             op.status = "draft"
             return False
         try:
             check_target(op.payload)
-        except ValueError:
+            authorize_method(execution_identity(db, op.actor), op.method, op.payload)
+        except (ValueError, HTTPException):
             op.status = "failed"
-            op.error = {"code": "target_not_allowed"}
+            op.error = {"code": "execution_policy_denied"}
+            record(db, "worker", "operation.denied", op.id)
             return False
         op.status = "running"
         op.started_at = now()
@@ -77,9 +85,12 @@ def cycle(client=None):
     try:
         with Session() as db:
             op = db.get(Operation, op_id)
-            result = api.call(op.method, op.payload, op.attachments, db)
+            from .observability import span
+
+            with span("telegram.call", {"telegram.method": op.method, "tac.operation_id": op.id}):
+                result = api.call(op.method, op.payload, op.attachments, db)
     except TelegramError as e:
-        if e.code == 429 and e.retry_after:
+        if e.code == 429 and e.retry_after and op.attempts < settings().max_retries:
             status = "queued"
             retry_at = now() + timedelta(seconds=max(1, int(e.retry_after)))
         else:
@@ -108,6 +119,7 @@ def cycle(client=None):
             op.run_at = retry_at
         else:
             op.finished_at = now()
+        context = request_context.set({"trace_id": op.trace_id})
         record(
             db,
             "worker",
@@ -115,7 +127,8 @@ def cycle(client=None):
             op.id,
             {"method": op.method, "attempt": op.attempts, "error": error},
         )
-    log.info("operation_finished", extra={"operation_id": op_id, "status": status})
+        request_context.reset(context)
+    log.info("operation_finished", extra={"operation_id": op_id, "trace_id": op.trace_id, "status": status})
     return True
 
 
@@ -124,9 +137,21 @@ def run():
     from .logging_setup import setup
 
     setup()
+    from .observability import setup as setup_tracing, shutdown
+
+    setup_tracing()
     api = Telegram()
-    while True:
+    stop = threading.Event()
+    for signum in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(signum, lambda *_: stop.set())
+    last_prune = 0.0
+    while not stop.is_set():
         try:
+            if time.monotonic() - last_prune >= 3600:
+                from .maintenance import prune
+
+                prune()
+                last_prune = time.monotonic()
             cycle(api)
         except Exception as e:
             log.error("worker_cycle_failed", extra={"error_type": type(e).__name__})
@@ -135,7 +160,9 @@ def run():
                     record(db, "worker", "worker.failed", details={"error_type": type(e).__name__})
             except Exception:
                 pass  # Database failures remain visible in structured process logs.
-        time.sleep(settings().poll_interval)
+        stop.wait(settings().poll_interval)
+    api.client.close()
+    shutdown()
 
 
 if __name__ == "__main__":

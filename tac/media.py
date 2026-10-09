@@ -53,6 +53,7 @@ def preview(db, e):
             e.id + "." + e.format,
             {"tgs": "application/gzip", "webm": "video/webm", "webp": "image/webp"}[e.format],
         )
+        original.actor = "catalog"
         e.asset_id = original.id
         path = settings().storage_dir / original.id
         out = settings().storage_dir / (original.id + ".png")
@@ -86,7 +87,9 @@ def preview(db, e):
                 timeout=20,
                 capture_output=True,
             )
-        e.preview_id = store(db, out.read_bytes(), e.id + ".png", "image/png").id
+        rendered = store(db, out.read_bytes(), e.id + ".png", "image/png")
+        rendered.actor = "catalog"
+        e.preview_id = rendered.id
         out.unlink(missing_ok=True)
         e.error = None
     except Exception as exc:
