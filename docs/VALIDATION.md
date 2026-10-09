@@ -12,7 +12,17 @@ This file records evidence, not a blanket production-readiness claim.
 
 ## CI status
 
-Read the repository's **CI** workflow for the current commit. Docker/PostgreSQL are not available in the local authoring runtime; a checked-in workflow is not itself evidence of a successful run. This section should be updated with the verified run URL after GitHub Actions completes.
+**Verified successful:** [GitHub Actions run 37980414095](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/37980414095), code commit `ef4c57c2b04045cdea1fc6622bd7ffb1346b0086`, 2026-10-09.
+
+- SQLite: **398 passed**, two PostgreSQL-only cases skipped.
+- PostgreSQL 17: **400 passed**, including concurrent claim protection and recovery versus late-response locking.
+- Alembic upgrade, drift check, downgrade and re-upgrade succeeded.
+- Two Playwright scenarios passed, including an authenticated remote MCP tool call.
+- Docker image built successfully; Compose migrated the database and started the API and worker.
+- A draft operation and uploaded file survived backup/restore; restoration paused execution as designed.
+- Uninstall preserved persistent volumes; restarting restored access to the same file and paused state.
+
+These installation checks used synthetic credentials and never sent a Telegram message. Docker/PostgreSQL were exercised in GitHub Actions, not the local authoring runtime. The documentation-only commit recording this evidence does not change executable code.
 
 ## Live acceptance still required
 
