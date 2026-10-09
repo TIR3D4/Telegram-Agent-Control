@@ -72,3 +72,81 @@ test("remote MCP can call the authenticated REST diagnostics", async ({
   expect(body.result.isError).not.toBe(true);
   expect(JSON.stringify(body.result)).toContain("185");
 });
+
+test("owner creates scoped credential, validates buttons and revokes through approval", async ({
+  page,
+  request,
+}) => {
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  await page.locator("#key").fill(owner);
+  await page.locator("#login-form button").click();
+  await page.locator('[data-view="agents"]').click();
+  const name = "Browser agent " + Date.now();
+  await page.locator("#grant-name").fill(name);
+  await page.locator("#grant-role").selectOption("READ");
+  await page.locator("#grant-create").click();
+  await page
+    .getByRole("button", { name: "Create this grant", exact: true })
+    .click();
+  await expect(page.locator("#detail-body")).toContainText(
+    "Credential created",
+  );
+  const text = await page.locator("#detail-body pre").innerText();
+  const result = JSON.parse(text);
+  const authorization = { Authorization: "Bearer " + result.credential };
+  expect(
+    (await request.get("/v1/system", { headers: authorization })).status(),
+  ).toBe(200);
+  expect(
+    (
+      await request.post("/v1/operations", {
+        headers: authorization,
+        data: {
+          method: "sendMessage",
+          payload: { chat_id: "@ui_test", text: "denied" },
+          idempotency_key: "browser-denied-" + Date.now(),
+        },
+      })
+    ).status(),
+  ).toBe(403);
+  await page.locator("#close-detail").click();
+  await expect(page.locator("#detail-body")).toBeEmpty();
+  await page.locator('[data-view="keyboards"]').click();
+  await page.locator("#button-style-1").selectOption("primary");
+  await page.locator("#keyboard-build").click();
+  await expect(page.locator("#keyboard-result")).toContainText(
+    "inline_keyboard",
+  );
+  await expect(page.locator("#keyboard-result")).toContainText("primary");
+  await page.locator('[data-view="media"]').click();
+  await page
+    .locator("#library-upload")
+    .setInputFiles({
+      name: "browser-fixture.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("No external delivery"),
+    });
+  await expect(page.locator("#content")).toContainText("browser-fixture.txt");
+  for (const view of ["channels", "diagnostics", "settings", "maintenance"]) {
+    await page.locator(`[data-view="${view}"]`).click();
+    await expect(page.locator("#content .card").first()).toBeVisible();
+  }
+  await page.locator('[data-view="agents"]').click();
+  await page.locator(`[data-revoke="${result.grant.id}"]`).click();
+  await page
+    .getByRole("button", {
+      name: "Approve these exact parameters",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Execute approved request", exact: true })
+    .click();
+  await expect(page.locator("#detail-body")).toContainText("executed");
+  expect(
+    (await request.get("/v1/system", { headers: authorization })).status(),
+  ).toBe(401);
+  expect(errors).toEqual([]);
+});

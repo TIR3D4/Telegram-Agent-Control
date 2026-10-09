@@ -13,6 +13,8 @@ backup() (
   compose exec -T postgres pg_dump -U tac -d tac -Fc > "$dir/database.dump"
   compose run --rm --no-deps -T api tar -C /data/media -czf - . > "$dir/media.tar.gz"
   chmod 600 "$dir/"*
+  python3 scripts/backup_manifest.py create "$dir"
+  compose run --rm --no-deps -T api python -m tac.maintenance backup-record < "$dir/manifest.json"
   printf 'Backup created: %s (protect .env separately)\n' "$dir"
 )
 command="${1:-menu}"
@@ -44,6 +46,7 @@ case "$command" in
   compose build
   compose stop api worker
   compose run --rm migrate
+  compose run --rm --no-deps -T api python -m tac.maintenance pause-upgrade
   compose up -d
   compose ps
   ;;
@@ -52,14 +55,39 @@ case "$command" in
   need_docker
   dir="${2:?Usage: tacctl restore backups/TIMESTAMP}"
   [[ -f "$dir/database.dump" && -f "$dir/media.tar.gz" ]] || { printf '%s\n' 'Invalid backup directory'; exit 1; }
+  python3 scripts/backup_manifest.py verify "$dir"
   read -r -p 'Replace database and media with this backup? Type RESTORE: ' answer
   [[ "$answer" == RESTORE ]] || exit 1
   compose stop api worker
   compose exec -T postgres pg_restore -U tac -d tac --clean --if-exists --exit-on-error < "$dir/database.dump"
   compose run --rm --no-deps -T api sh -c 'find /data/media -mindepth 1 -maxdepth 1 -type f -delete; tar -C /data/media -xzf -' < "$dir/media.tar.gz"
+  compose run --rm migrate
   compose run --rm --no-deps -T api python -m tac.maintenance restored
   compose up -d
   printf '%s\n' 'Restored with execution PAUSED. Review uncertain operations before resuming.'
+  ;;
+ verify-backup)
+  python3 scripts/backup_manifest.py verify "${2:?Usage: tacctl verify-backup backups/TIMESTAMP}"
+  ;;
+ rollback)
+  need_docker
+  python3 scripts/rollback.py "${2:?Usage: tacctl rollback backups/TIMESTAMP}"
+  ;;
+ restore-request)
+  need_docker
+  request_id="${2:?Usage: tacctl restore-request REQUEST_ID}"
+  [[ "$request_id" =~ ^[0-9a-f]{32}$ ]] || { printf '%s\n' 'Invalid request ID'; exit 1; }
+  mkdir -p backups/receipts
+  [[ ! -e "backups/receipts/$request_id" ]] || { printf '%s\n' 'Request already consumed'; exit 1; }
+  backup_name="$(compose exec -T api python -m tac.maintenance consume-restore "$request_id")"
+  [[ "$backup_name" =~ ^[0-9]{8}T[0-9]{6}Z$ ]] || { printf '%s\n' 'Invalid approved backup'; exit 1; }
+  python3 scripts/backup_manifest.py verify "backups/$backup_name"
+  (umask 077; set -o noclobber; printf '%s\n' "$backup_name" > "backups/receipts/$request_id")
+  "$0" restore "backups/$backup_name"
+  ;;
+ credentials)
+  need_docker
+  printf '%s\n' 'Use Agent permissions in the owner console to issue scoped keys. Rotation and revocation require a reviewed maintenance request.'
   ;;
  uninstall)
   need_docker
@@ -76,10 +104,10 @@ case "$command" in
  menu)
   printf '\nTelegram Agent Control\n\n'
   PS3='Choose an action: '
-  select item in install status logs start stop restart config update backup uninstall exit; do
+  select item in install status logs start stop restart config doctor update backup credentials uninstall exit; do
     [[ "$item" == exit ]] && exit 0
     [[ -n "$item" ]] && exec "$0" "$item"
   done
   ;;
- *) printf '%s\n' 'Usage: tacctl {install|start|stop|restart|status|logs|doctor|config|update|backup|restore|uninstall|purge|menu}'; exit 2 ;;
+ *) printf '%s\n' 'Usage: tacctl {install|start|stop|restart|status|logs|doctor|config|update|backup|verify-backup|restore|restore-request|rollback|credentials|uninstall|purge|menu}'; exit 2 ;;
 esac

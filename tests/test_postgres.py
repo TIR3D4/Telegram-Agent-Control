@@ -69,3 +69,27 @@ def test_recovery_lock_fences_a_late_worker_response(client, agent, owner):
         future.result(timeout=10)
     with Session() as db:
         assert db.get(Operation, op["id"]).status == "uncertain"
+
+
+@pytest.mark.skipif(engine.dialect.name != "postgresql", reason="Atomic quota contention requires PostgreSQL")
+def test_agent_request_quota_is_atomic(client, owner):
+    from test_governance import grant
+    from tac.security import authenticate
+    from fastapi import HTTPException
+
+    _, headers = grant(client, owner, rpm=3)
+    token = headers["Authorization"].split()[1]
+    barrier = threading.Barrier(8)
+
+    def attempt():
+        barrier.wait()
+        try:
+            authenticate(token)
+            return 200
+        except HTTPException as error:
+            return error.status_code
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(lambda _: attempt(), range(8)))
+    assert results.count(200) == 3
+    assert results.count(429) == 5

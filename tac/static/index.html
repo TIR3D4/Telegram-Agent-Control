@@ -6,14 +6,15 @@
     <title>Telegram Agent Control</title>
     <link rel="stylesheet" href="/static/style.css" />
     <script defer src="/static/app.js"></script>
+    <script defer src="/static/control.js"></script>
   </head>
   <body>
     <aside>
       <a class="brand" href="/"
         >↗ <span>TELEGRAM<br /><b>AGENT CONTROL</b></span></a
       >
-      <div class="workspace">CONTROL PLANE <span>v0.1</span></div>
-      <nav id="nav">
+      <div class="workspace">CONTROL PLANE <span>v0.2</span></div>
+      <nav id="nav" aria-label="Workspace sections">
         <button data-view="overview" class="active">◉ Overview</button
         ><button data-view="operations">↗ Operations</button
         ><button data-view="compose">＋ Compose</button
@@ -22,6 +23,13 @@
         ><button data-view="methods">⌘ API explorer</button
         ><button data-view="logs">≡ Activity & logs</button
         ><button data-view="database">▤ Database</button>
+        <button data-view="channels">↗ Channels</button>
+        <button data-view="media">▣ Media library</button>
+        <button data-view="keyboards">⌨ Keyboards</button>
+        <button data-view="agents">⚿ Agent permissions</button>
+        <button data-view="diagnostics">◈ Health & metrics</button>
+        <button data-view="settings">⚙ Settings</button>
+        <button data-view="maintenance">✓ Maintenance approvals</button>
       </nav>
       <div class="aside-foot">
         <span id="connection">● Disconnected</span
@@ -48,6 +56,7 @@
         </p>
         <form id="login-form">
           <input
+            aria-label="Access credential"
             id="key"
             type="password"
             placeholder="Access key"

@@ -17,3 +17,6 @@ dist/
 node_modules/
 test-results/
 playwright-report/
+
+.mypy_cache/
+.security-reports/

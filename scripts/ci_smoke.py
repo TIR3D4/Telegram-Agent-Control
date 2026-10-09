@@ -62,6 +62,7 @@ try:
         assert operation["status"] == "draft"
         subprocess.run(["./scripts/tacctl", "backup"], check=True)
         backup = sorted(Path("backups").iterdir())[-1]
+        subprocess.run(["./scripts/tacctl", "verify-backup", str(backup)], check=True)
         ready(c)
         c.post("/v1/operations/" + operation["id"] + "/cancel").raise_for_status()
         subprocess.run(["./scripts/tacctl", "restore", str(backup)], input="RESTORE\n", text=True, check=True)
@@ -72,7 +73,14 @@ try:
         subprocess.run(["./scripts/tacctl", "start"], check=True)
         assert ready(c)["paused"]["enabled"] is True
         assert c.get("/v1/assets/" + asset_id).content == content
-        print("Compose readiness, backup/restore and data-preserving uninstall/reinstall passed")
+        subprocess.run(
+            ["./scripts/tacctl", "rollback", str(backup)], input="ROLLBACK\n", text=True, check=True
+        )
+        assert ready(c)["paused"]["enabled"] is True
+        assert c.get("/v1/assets/" + asset_id).content == content
+        print(
+            "Compose readiness, verified backup/restore, same-revision rollback and data-preserving uninstall/reinstall passed"
+        )
 
 finally:
     subprocess.run(["docker", "compose", "down", "-v"])
