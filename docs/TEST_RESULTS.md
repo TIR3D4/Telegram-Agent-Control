@@ -32,7 +32,20 @@ Code revision `b551ac5881b8350153684614143169861520596a` adds the legacy-key dis
 - `.venv/bin/pytest -q`: **475 passed, 3 skipped in 9.22 s**. Skips are PostgreSQL-specific; no local PostgreSQL/Docker daemon was available.
 - Ruff check/format, focused mypy and Bandit medium/high gate: passed.
 - The 17-test governance file independently passed after the change.
-- Additional remote CI evidence for this revision is recorded below when complete; earlier revision's CI is not presented as this revision's run.
+
+## Final code revision CI
+
+Code revision `b551ac5881b8350153684614143169861520596a`:
+[successful run 37985363329](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/37985363329), job `114005892678`.
+
+- SQLite: **475 passed, 3 skipped in 26.59 s**.
+- PostgreSQL 17: **478 passed in 51.35 s**.
+- Playwright: **3 passed in 6.8 s**.
+- Ruff check/format, five-module mypy, Bandit medium/high, locked Python advisory audit, npm audit, migration roundtrip/schema drift and shell/JS checks: passed.
+- Docker image build and Compose readiness/worker, verified backup/restore, execution pause, data-preserving uninstall/reinstall and same-revision rollback: passed.
+- No known Python vulnerabilities / zero npm advisory findings were reported on this run's date.
+
+The following documentation/schema-export commit `387affb1e21146a3847cbc28b2bf2a8d6a56e8f2` and final evidence-only documentation changes do not alter the runtime tested above. Their independent CI runs may be viewed on [PR #1](https://github.com/TIR3D4/Telegram-Agent-Control/pull/1). Local documentation links and tracked secret-pattern/local-path checks passed; these checks are not a full secret-scanner certification.
 
 ## Coverage interpretation
 

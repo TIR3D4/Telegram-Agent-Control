@@ -11,7 +11,7 @@ Date: 2026-10-09. Repository: TIR3D4/Telegram-Agent-Control. Branch: `engineerin
 | `2c3d5acc89659073a9e658e721077b6372950379` | Governance/media/keyboard/maintenance console, verified backup/restore/rollback, protocol/security/browser/PG CI |
 | `b551ac5881b8350153684614143169861520596a` | Disable legacy shared agent/reader credentials on fresh installs; opt-out also stops queued legacy execution |
 
-Documentation commits follow these code changes; consult the branch history for their exact IDs.
+Documentation/contract export commit: `387affb1e21146a3847cbc28b2bf2a8d6a56e8f2`. Final evidence-only documentation follows it. Review: [PR #1](https://github.com/TIR3D4/Telegram-Agent-Control/pull/1).
 
 ## Implemented and preserved
 
@@ -27,7 +27,7 @@ Documentation commits follow these code changes; consult the branch history for 
 
 ## Evidence and acceptance
 
-[TEST_RESULTS.md](TEST_RESULTS.md) records exact commands, counts and CI links. Tests use mocks, fixture media and synthetic credentials. All 42 tools are invoked through MCP against the real REST app; this is stronger than discovery-only coverage but is not live Telegram proof. Docker/Compose, PostgreSQL, migration roundtrip, backup/restore and same-revision rollback were exercised in GitHub Actions.
+[TEST_RESULTS.md](TEST_RESULTS.md) records exact commands, counts and CI links. Final code CI [37985363329](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/37985363329) passed: 475 SQLite tests (+3 PG-only skips), 478 PostgreSQL tests, 3 browser tests, migrations, security gates, Docker and Compose lifecycle. Tests use mocks, fixture media and synthetic credentials. All 42 tools are invoked through MCP against the real REST app; this is stronger than discovery-only coverage but is not live Telegram proof. Docker/Compose, PostgreSQL, migration roundtrip, backup/restore and same-revision rollback were exercised in GitHub Actions.
 
 [RESEARCH_COMPARISON.md](RESEARCH_COMPARISON.md) pins reference source commits, paths, licenses and observed maintenance/test structure. No source was copied from those projects and their test suites were not executed. Major choices are justified in ADRs; broad research stopped after those decisions.
 
