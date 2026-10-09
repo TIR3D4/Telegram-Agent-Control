@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Telegram Agent Control</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body>
+    <aside>
+      <a class="brand" href="/"
+        >↗ <span>TELEGRAM<br /><b>AGENT CONTROL</b></span></a
+      >
+      <div class="workspace">CONTROL PLANE <span>v0.1</span></div>
+      <nav id="nav">
+        <button data-view="overview" class="active">◉ Overview</button
+        ><button data-view="operations">↗ Operations</button
+        ><button data-view="compose">＋ Compose</button
+        ><button data-view="automations">⌁ Automations</button
+        ><button data-view="emojis">✧ Emoji studio</button
+        ><button data-view="methods">⌘ API explorer</button
+        ><button data-view="logs">≡ Activity & logs</button
+        ><button data-view="database">▤ Database</button>
+      </nav>
+      <div class="aside-foot">
+        <span id="connection">● Disconnected</span
+        ><button id="disconnect">Disconnect</button
+        ><a href="/docs" target="_blank">REST documentation ↗</a>
+      </div>
+    </aside>
+    <main>
+      <header>
+        <div>
+          <div class="eyebrow">SELF-HOSTED • API FIRST</div>
+          <h1 id="title">Overview</h1>
+        </div>
+        <div class="top-actions">
+          <button id="refresh">↻ Refresh</button
+          ><button id="pause" class="danger">Pause execution</button>
+        </div>
+      </header>
+      <section id="login" class="card">
+        <h2>Connect your workspace</h2>
+        <p>
+          Enter the owner, agent, or read-only key generated during
+          installation. It stays in this tab's memory.
+        </p>
+        <form id="login-form">
+          <input
+            id="key"
+            type="password"
+            placeholder="Access key"
+            autocomplete="off"
+            required
+          /><button class="primary">Connect</button>
+        </form>
+      </section>
+      <div id="notice" role="status" hidden></div>
+      <div id="content" hidden></div>
+      <dialog id="detail">
+        <div class="dialog-top">
+          <h2>Operation details</h2>
+          <button id="close-detail">Close</button>
+        </div>
+        <div id="detail-body"></div>
+      </dialog>
+    </main>
+  </body>
+</html>

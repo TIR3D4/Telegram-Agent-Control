@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+compose() { docker compose "$@"; }
+need_docker() { command -v docker >/dev/null && docker compose version >/dev/null || { printf '%s\n' 'Docker Engine + Compose v2 required. See docs/INSTALL.md.'; exit 1; }; }
+backup() (
+  mkdir -p backups
+  chmod 700 backups
+  local dir="backups/$(date -u +%Y%m%dT%H%M%SZ)"
+  mkdir -m 700 "$dir"
+  compose stop worker api
+  trap 'compose start api worker >/dev/null' EXIT
+  compose exec -T postgres pg_dump -U tac -d tac -Fc > "$dir/database.dump"
+  compose run --rm --no-deps -T api tar -C /data/media -czf - . > "$dir/media.tar.gz"
+  chmod 600 "$dir/"*
+  printf 'Backup created: %s (protect .env separately)\n' "$dir"
+)
+command="${1:-menu}"
+case "$command" in
+ install)
+  need_docker
+  python3 scripts/configure.py
+  compose up -d --build
+  compose ps
+  printf '%s\n' 'Console: configured HTTPS domain or http://127.0.0.1:8787' 'Run scripts/tacctl doctor to verify readiness.'
+  ;;
+ start) need_docker; compose up -d ;;
+ stop) need_docker; compose stop ;;
+ restart) need_docker; compose restart api worker ;;
+ status) need_docker; compose ps ;;
+ logs) need_docker; compose logs --tail 200 -f api worker ;;
+ config) "${EDITOR:-nano}" .env ;;
+ doctor)
+  need_docker
+  compose ps
+  compose exec -T api python -c "from tac.config import settings; settings().check(); print('Configuration valid')"
+  compose exec -T api curl -fsS http://localhost:8787/health/ready
+  ;;
+ update)
+  need_docker
+  if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then printf '%s\n' 'Commit or stash tracked changes before update.'; exit 1; fi
+  backup
+  git pull --ff-only
+  compose build
+  compose stop api worker
+  compose run --rm migrate
+  compose up -d
+  compose ps
+  ;;
+ backup) need_docker; backup ;;
+ restore)
+  need_docker
+  dir="${2:?Usage: tacctl restore backups/TIMESTAMP}"
+  [[ -f "$dir/database.dump" && -f "$dir/media.tar.gz" ]] || { printf '%s\n' 'Invalid backup directory'; exit 1; }
+  read -r -p 'Replace database and media with this backup? Type RESTORE: ' answer
+  [[ "$answer" == RESTORE ]] || exit 1
+  compose stop api worker
+  compose exec -T postgres pg_restore -U tac -d tac --clean --if-exists --exit-on-error < "$dir/database.dump"
+  compose run --rm --no-deps -T api sh -c 'find /data/media -mindepth 1 -maxdepth 1 -type f -delete; tar -C /data/media -xzf -' < "$dir/media.tar.gz"
+  compose run --rm --no-deps -T api python -m tac.maintenance restored
+  compose up -d
+  printf '%s\n' 'Restored with execution PAUSED. Review uncertain operations before resuming.'
+  ;;
+ uninstall)
+  need_docker
+  compose down --remove-orphans
+  printf '%s\n' 'Services removed. Database, media, backups and .env preserved.'
+  ;;
+ purge)
+  need_docker
+  read -r -p 'Permanently delete database and media volumes? Type DELETE: ' answer
+  [[ "$answer" == DELETE ]] || exit 1
+  compose down -v --remove-orphans
+  printf '%s\n' 'Volumes deleted. Backups and .env preserved for explicit manual handling.'
+  ;;
+ menu)
+  printf '\nTelegram Agent Control\n\n'
+  PS3='Choose an action: '
+  select item in install status logs start stop restart config update backup uninstall exit; do
+    [[ "$item" == exit ]] && exit 0
+    [[ -n "$item" ]] && exec "$0" "$item"
+  done
+  ;;
+ *) printf '%s\n' 'Usage: tacctl {install|start|stop|restart|status|logs|doctor|config|update|backup|restore|uninstall|purge|menu}'; exit 2 ;;
+esac

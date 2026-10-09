@@ -1,0 +1,66 @@
+name: telegram-agent-control
+x-app: &app
+  build: .
+  image: telegram-agent-control:local
+  env_file: .env
+  restart: unless-stopped
+  volumes: [media:/data/media]
+  depends_on:
+    postgres:
+      condition: service_healthy
+  logging:
+    driver: json-file
+    options:
+      max-size: '10m'
+      max-file: '5'
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tac
+      POSTGRES_USER: tac
+      POSTGRES_PASSWORD: ${TAC_DB_PASSWORD:?Run scripts/tacctl install}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U tac -d tac']
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    logging:
+      driver: json-file
+      options: {max-size: '10m', max-file: '3'}
+  migrate:
+    <<: *app
+    restart: 'no'
+    command: [alembic, upgrade, head]
+  api:
+    <<: *app
+    command: [tac, serve]
+    ports: ['${TAC_BIND:-127.0.0.1}:${TAC_PORT:-8787}:8787']
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, curl, -fsS, http://localhost:8787/health/ready]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  worker:
+    <<: *app
+    command: [tac, worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  caddy:
+    image: caddy:2-alpine
+    profiles: [tls]
+    restart: unless-stopped
+    environment:
+      TAC_DOMAIN: ${TAC_DOMAIN:-localhost}
+    ports: ['80:80', '443:443']
+    volumes: ['./Caddyfile:/etc/caddy/Caddyfile:ro', 'caddy_data:/data', 'caddy_config:/config']
+    depends_on: [api]
+volumes:
+  pgdata:
+  media:
+  caddy_data:
+  caddy_config:

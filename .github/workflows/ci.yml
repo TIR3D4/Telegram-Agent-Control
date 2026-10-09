@@ -1,0 +1,58 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: tac_test
+          POSTGRES_USER: tac
+          POSTGRES_PASSWORD: ci-test-only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd 'pg_isready -U tac -d tac_test'
+          --health-interval 5s --health-timeout 3s --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12', cache: pip}
+      - run: pip install -r requirements.lock && pip install --no-deps -e .
+      - run: ruff check tac scripts tests && ruff format --check tac scripts tests
+      - run: pytest -q
+      - name: PostgreSQL behavior and concurrency
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://tac:ci-test-only@localhost:5432/tac_test
+        run: pytest -q
+      - name: Migration roundtrip
+        env:
+          TAC_DATABASE_URL: postgresql+psycopg://tac:ci-test-only@localhost:5432/tac_test
+        run: |
+          python -c 'from tac.db import Base,engine; Base.metadata.drop_all(engine)'
+          alembic upgrade head
+          alembic check
+          alembic downgrade base
+          alembic upgrade head
+      - name: Shell and JavaScript syntax
+        run: |
+          bash -n scripts/tacctl scripts/install.sh
+          node --check tac/static/app.js
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm}
+      - name: Browser console test
+        run: |
+          python -m venv --system-site-packages .venv
+          npm ci
+          npx playwright install --with-deps chromium
+          npm test
+      - name: Build deployable image
+        run: docker build -t tac:ci .
+      - name: Compose smoke test
+        run: python scripts/ci_smoke.py
