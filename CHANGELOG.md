@@ -1,5 +1,11 @@
 # Changelog
 
+## Setup hotfix — non-seekable SSH terminal
+
+- Read and write `/dev/tty` through separate streams so the piped updater can prompt on non-seekable terminals.
+- Added a real PTY regression test with redirected stdin and hidden password entry.
+- If v0.3 already built and stopped at the username prompt, pull this fix and run `bash scripts/tacctl setup`; no rebuild or full upgrade is needed.
+
 ## 0.3.0 — Console access and managed connections
 
 - Responsive username/password login with hashed credentials, expiring HttpOnly sessions, CSRF checks and login rate limiting.

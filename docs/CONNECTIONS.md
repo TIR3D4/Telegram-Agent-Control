@@ -51,7 +51,11 @@ automatic schema downgrade. See INSTALL.md for application data recovery. Protec
 backup and must be retained together for full provider recovery. Do not restore
 only an OAuth dump without the matching configuration and a reviewed recovery plan.
 
-To finish a interrupted setup: `bash scripts/tacctl setup`. To explicitly change
+To finish an interrupted setup: `bash scripts/tacctl setup`.
+If the initial v0.3 updater stopped with `io.UnsupportedOperation: File or stream is not seekable`
+at the username prompt, run `git pull --ff-only origin engineering/production-hardening-v0.2`
+then `bash scripts/tacctl setup`. The host-side prompt fix needs no image rebuild;
+already completed backups, migrations and running services are retained. To explicitly change
 both the local and provider login: `bash scripts/tacctl setup --password` (requires
 provider setup-admin access). Old console sessions are invalidated by a changed
 password hash. Routine browser logout invalidates the current session.

@@ -53,13 +53,21 @@ def write_env(path, changes):
 
 def prompt(label):
     # Also works when the one-command updater was piped to python.
-    with open("/dev/tty", "r+") as tty:
-        tty.write(label)
-        tty.flush()
-        value = tty.readline()
-        if not value:
-            raise SystemExit("Setup cancelled")
-        return value.strip()
+    # Buffered read/write mode (r+) requires seeking on newer Python versions.
+    # A terminal is not seekable: use independent text streams instead.
+    try:
+        with open("/dev/tty", "w") as output:
+            output.write(label)
+            output.flush()
+        with open("/dev/tty", "r") as terminal:
+            value = terminal.readline()
+    except OSError:
+        raise SystemExit(
+            "Interactive terminal required. Run bash scripts/tacctl setup in your SSH terminal."
+        ) from None
+    if not value:
+        raise SystemExit("Setup cancelled")
+    return value.strip()
 
 
 def account():
