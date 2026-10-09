@@ -73,3 +73,7 @@ Many tests are parameterized registry/transport cases. Counts do not mean hundre
 Failed intermediate tests were corrected before delivery: SDK structured output required typed dict annotations; the reviewed-emoji fixture initially lacked review status; an environment-disabled OpenTelemetry SDK needed explicit test configuration. No production workaround or gate suppression was used.
 
 Not tested: actual Telegram delivery/permissions, live OAuth provider/client linking, MTProto (not implemented), external OTLP collector, independent penetration test, production load, arbitrary cross-release rollback, Ubuntu host provisioning. See [TESTING.md](TESTING.md) to reproduce and [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) for boundaries.
+
+## Mobile assistant candidate
+
+See [mobile verification](MOBILE_ASSISTANT_TEST_RESULTS.md) for exact local results, mock/live distinctions and blocked checks. The candidate adds browser/WebKit CI and PostgreSQL claim tests; do not infer their success until the candidate CI is complete.

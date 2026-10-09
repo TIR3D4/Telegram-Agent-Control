@@ -14,3 +14,12 @@ This is a production-oriented hardening candidate, **not an unconditional produc
 10. **Security/scale:** no independent penetration test/load benchmark. The shared database queue is appropriate for current scope, not proven high-volume SaaS. Media MIME is declared; no antivirus or separate renderer sandbox. Unauthenticated edge traffic needs infrastructure rate limits. Only the five security-boundary modules currently have a mypy gate; this is not whole-project strict typing.
 11. **Observability:** optional OTLP exporter tested in-memory, no collector deployed. Application correlation does not implement full cross-process W3C tracing. Persisted audit identifies REST/domain actions rather than every MCP tool name. One global heartbeat indicates some worker is alive. Non-HTTP audit, updates/media and idempotency records are retained; archival remains operator-managed.
 12. **Protocol:** 42 tested tools with typed inputs and bounded structured JSON; some result dictionaries are intentionally open schemas and image output is a content block. Tool errors can be structured `{ok:false}` even with MCP `isError=false`; clients must inspect both. `/v1` remains the REST prefix; `/api/v1` is not implemented.
+
+## Mobile assistant candidate
+
+- Independent chat is separate from ChatGPT; missing account registration and Desktop-only plugin availability remain host limitations.
+- No self-hosted autonomous coding/PR/deploy engine; chat stores development proposals for a separate coding workflow.
+- Provider tool support and billing depend on the configured account/model. No paid live inference has been tested.
+- Live authenticated new-chat getMe on the owner VPS and physical iPhone Safari/Home Screen are pending.
+- No offline service worker or token streaming; tool state polling is persisted server-side.
+- No measured LibreChat/Open WebUI/mcpo RAM benchmark; comparison uses actual source/deployment footprint.

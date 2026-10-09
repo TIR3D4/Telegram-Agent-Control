@@ -374,7 +374,7 @@ def main():
     )
     if external:
         print("External OAuth provider configuration preserved; console login configured separately.")
-    elif public.startswith("https://"):
+    elif public.startswith("https://") and "--console-only" not in sys.argv:
         changes.update(provision(env, password))
     if password is not None:
         changes.update(

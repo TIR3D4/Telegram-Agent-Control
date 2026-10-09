@@ -40,3 +40,7 @@ The console has a simple terminal menu companion, not a full terminal dashboard.
 ## Operator handoff
 
 Use the branch-specific commands in [INSTALLATION.md](INSTALLATION.md) on staging first. Configure a domain, external issuer if needed, and finite agent grants. Use an authorized test bot/channel to verify getMe/getChatMember and required post/media/slideshow/emoji behavior. Obtain explicit authorization before production installation or channel publishing. No live credentials from the conversation were placed in code, docs, logs or tests.
+
+## Mobile assistant candidate
+
+Selected an additive Persian in-panel chat over existing REST after [source comparison](MOBILE_ASSISTANT_RESEARCH.md). [Operation/setup guide](MOBILE_ASSISTANT.md) and [verification record](MOBILE_ASSISTANT_TEST_RESULTS.md) describe implemented behavior and remaining acceptance checks. Scoped server-held tools cannot approve, execute arbitrary shell or deploy. Development requests are proposals for a separate branch/PR workflow, not an autonomous coding runner. ChatGPT's missing account registration remains an external limitation. No production installation or real Telegram publication was performed for this candidate.

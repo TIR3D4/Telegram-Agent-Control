@@ -23,7 +23,7 @@ case "$command" in
   need_docker
   python3 scripts/configure.py
   compose up -d --build
-  python3 scripts/setup_access.py
+  python3 scripts/setup_access.py --console-only
   compose ps
   printf '%s\n' 'Console: configured HTTPS domain or http://127.0.0.1:8787' 'Run scripts/tacctl doctor to verify readiness.'
   ;;
@@ -45,7 +45,7 @@ case "$command" in
   ;;
  update)
   need_docker
-  python3 scripts/upgrade.py
+  python3 scripts/upgrade.py "${@:2}"
   ;;
  backup) need_docker; backup ;;
  restore)

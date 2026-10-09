@@ -24,3 +24,11 @@ Worker completion and owner reconciliation lock the operation row, preserving re
 ## 0.1.0 — 2026-10-09
 
 Initial control-plane release: Bot API 10.3 registry, authenticated REST/MCP, web and terminal consoles, PostgreSQL operations and audit, owner approval, timestamp/cron/event automation, visual emoji catalog, media uploads, Docker install/update/backup/restore/uninstall, and automated validation. Live Telegram deployment remains an operator acceptance step.
+
+## Mobile assistant candidate
+
+- Add Persian server-side chat, encrypted provider/grant storage and durable bounded tool turns over the existing REST policies.
+- Add independent owner review links, read-only getMe connection test and development specification records.
+- Preserve login/OAuth on upgrade; support explicit reviewed commit, private upgrade reports and optional console-only initial setup.
+- Include vault in verified backups; block unreviewed cross-revision database rollback.
+- Add iPhone viewport/WebKit CI coverage and denial/idempotency/quota/provider-boundary tests.

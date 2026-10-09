@@ -14,6 +14,10 @@
 
 <p align="center"><a href="docs/INSTALL.md">Install</a> · <a href="docs/API.md">API</a> · <a href="docs/AGENTS.md">Connect an agent</a> · <a href="docs/AUTOMATION.md">Automation</a> · <a href="docs/README.fa.md">راهنمای فارسی</a></p>
 
+## Persian mobile assistant
+
+An independent Persian RTL chat is available in the console on the `engineering/mobile-assistant` review branch. Configure a provider/model/key from the web; Telegram writes remain drafts pending independent owner approval. This does not enable a missing ChatGPT custom-MCP account feature. API usage is billed separately. [Setup and limits](docs/MOBILE_ASSISTANT.md) · [source comparison and architecture decision](docs/MOBILE_ASSISTANT_RESEARCH.md). Autonomous coding/deployment is not implemented.
+
 ## What it does
 
 Telegram Agent Control provides a web console, REST API, MCP bridge and persistent worker over a generated Telegram Bot API registry. An agent can discover a method, inspect its schema, prepare an operation and monitor the real result. The owner approves external writes. The server stores execution state, media, workflows and an audit trail in PostgreSQL. Version 0.2 adds 42 tested MCP tools, per-agent scopes and ownership, expiring approvals, OAuth resource verification, audited credential lifecycle and verified backups.
