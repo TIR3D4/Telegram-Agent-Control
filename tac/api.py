@@ -320,7 +320,9 @@ def cancel(id: str, role=Depends(writer)):
 @app.post("/v1/operations/{id}/resolve", tags=["Operations"])
 def resolve_unknown(id: str, body: Resolution, role=Depends(owner)):
     with Session.begin() as db:
-        op = get(db, Operation, id)
+        op = db.get(Operation, id, with_for_update=True)
+        if not op:
+            raise HTTPException(404, "Not found")
         if op.status != "uncertain" or body.status not in ("succeeded", "failed"):
             raise HTTPException(409, "Only uncertain operations can be reconciled")
         op.status = body.status

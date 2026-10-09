@@ -92,7 +92,7 @@ def cycle(client=None):
         status = "uncertain"
         error = {"code": "internal_error", "message": type(e).__name__}
     with Session.begin() as db:
-        op = db.get(Operation, op_id)
+        op = db.get(Operation, op_id, with_for_update=True)
         # Never overwrite another recovery decision with an expired worker response.
         if op.status != "running" or op.execution_token != execution_token:
             return True
