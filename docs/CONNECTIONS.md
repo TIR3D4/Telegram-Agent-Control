@@ -138,3 +138,7 @@ No provider/database ports are exposed to the internet; Caddy terminates TLS.
 For external identity providers instead of managed Keycloak, configure the existing
 issuer/JWKS/audience variables and maintain clients/users at that provider. Do not
 run the managed setup against an unrelated provider.
+
+## No custom-MCP registration / mobile-only owner
+
+Use the [independent Persian console assistant](MOBILE_ASSISTANT.md). It does not require or enable a ChatGPT account feature. Existing OAuth/MCP connections remain available to supported clients; no manifest or network workaround is claimed to register a missing connection option.

@@ -17,6 +17,11 @@ def main():
     meta = verify(directory)
     if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=root).strip():
         raise SystemExit("Commit/stash tracked changes first")
+    current = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+    if meta["commit"] != current:
+        raise SystemExit(
+            "Cross-revision database rollback is blocked. Review schema/application compatibility in an isolated restore before planning a restore; prefer a forward fix."
+        )
     run("git", "cat-file", "-e", meta["commit"] + "^{commit}")
     if input("Restore code, database and media from this backup? Type ROLLBACK: ") != "ROLLBACK":
         raise SystemExit("Cancelled")

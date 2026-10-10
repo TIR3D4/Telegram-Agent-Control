@@ -484,3 +484,23 @@ aside {
   header { flex-direction: column; gap: 14px; }
   header h1 { overflow-wrap: anywhere; }
 }
+/* Server-side mobile chat: no cached credentials or model-supplied HTML. */
+.assistant {max-width:850px;margin-inline:auto;text-align:right;line-height:1.8}
+.assistant .card {overflow-wrap:anywhere}
+.assistant summary {cursor:pointer;font-weight:700;min-height:44px}
+.assistant input,.assistant textarea,.assistant select {font-size:16px;width:100%;min-width:0}
+.assistant input[type=checkbox] {width:auto;margin-inline-end:8px}
+.chat-user {background:#243746;border-radius:16px;padding:12px;white-space:pre-wrap}
+.chat-reply {white-space:pre-wrap;unicode-bidi:plaintext}
+.chat-state {color:#99bcff;font-weight:600}
+.chat-events {font-size:13px;color:#9bafbc}
+.assistant .muted {font-size:12px;color:#9bafbc}
+@media(max-width:600px){.assistant .card{padding:16px}.assistant .actions{flex-wrap:wrap}.assistant button{min-height:44px}main{padding-bottom:env(safe-area-inset-bottom)}}
+#chat-nav-toggle {display:none}
+.assistant textarea {height:110px;min-height:110px;resize:vertical}
+@media(max-width:600px){
+  .chat-mode #chat-nav-toggle{display:block;margin:12px 0 0;min-height:44px}
+  .chat-mode aside:not(.chat-nav-open) nav,.chat-mode aside:not(.chat-nav-open) .aside-foot,.chat-mode .workspace{display:none}
+  .chat-mode header .eyebrow,.chat-mode header .top-actions{display:none}
+  .chat-mode header{margin-bottom:16px}
+}

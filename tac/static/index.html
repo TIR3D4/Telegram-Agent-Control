@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="/static/style.css" />
     <script defer src="/static/app.js"></script>
     <script defer src="/static/control.js"></script>
+    <script defer src="/static/assistant.js"></script>
+    <link rel="manifest" href="/static/manifest.webmanifest">
+    <meta name="theme-color" content="#10171c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
   </head>
   <body>
     <aside>
@@ -14,7 +18,9 @@
         >↗ <span>TELEGRAM<br /><b>AGENT CONTROL</b></span></a
       >
       <div class="workspace">CONTROL PLANE <span>v0.3</span></div>
+      <button id="chat-nav-toggle" aria-expanded="false" aria-controls="nav">فهرست مدیریت</button>
       <nav id="nav" aria-label="Workspace sections">
+        <button data-view="assistant">✦ دستیار گفتگو</button>
         <button data-view="overview" class="active">◉ Overview</button
         ><button data-view="operations">↗ Operations</button
         ><button data-view="compose">＋ Compose</button

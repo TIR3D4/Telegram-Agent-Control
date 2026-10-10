@@ -36,6 +36,10 @@ def verify(directory):
             if member.name in {".", "./"} and member.isdir():
                 continue
             name = member.name.removeprefix("./")
+            if name == ".assistant-vault":
+                if not member.isfile() or member.size != 44 or member.mode & 0o777 != 0o600:
+                    raise ValueError("Unsafe assistant vault entry")
+                continue
             if not member.isfile() or not re.fullmatch(r"[0-9a-f]{32}(?:\.[a-z0-9]{1,10})?", name):
                 raise ValueError("Unsafe media archive member")
     return meta

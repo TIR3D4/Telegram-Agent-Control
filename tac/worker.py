@@ -144,6 +144,10 @@ def run():
     stop = threading.Event()
     for signum in (signal.SIGTERM, signal.SIGINT):
         signal.signal(signum, lambda *_: stop.set())
+    from .assistant import run as run_assistant
+
+    chat_thread = threading.Thread(target=run_assistant, args=(stop,), daemon=True)
+    chat_thread.start()
     last_prune = 0.0
     while not stop.is_set():
         try:
@@ -161,6 +165,7 @@ def run():
             except Exception:
                 pass  # Database failures remain visible in structured process logs.
         stop.wait(settings().poll_interval)
+    chat_thread.join(timeout=5)
     api.client.close()
     shutdown()
 

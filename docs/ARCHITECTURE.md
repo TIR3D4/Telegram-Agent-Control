@@ -66,3 +66,7 @@ Keep `/v1` for existing clients; `/api/v1` is not an alias. `/mcp/`, `/openapi.j
 One configured bot account is retained. MTProto user sessions and a model-driven internal runtime are separate integrations, not simulated features. The deterministic runtime supports once/cron/update triggers, delays, cancellation, finite authorization and restart recovery without an LLM subscription.
 
 See [research](RESEARCH_COMPARISON.md), [ADRs](adr/0001-control-gateway.md) and [limits](KNOWN_LIMITATIONS.md).
+
+## Optional in-panel mobile chat
+
+See [mobile assistant ADR](MOBILE_ASSISTANT_RESEARCH.md). Owner-authenticated chat routes enqueue persistent chat turns. A bounded worker thread calls the configured HTTPS provider; explicit tools re-enter REST with a server-held scoped agent bearer. No human session or provider secret is included in model context. Independent owner approval is performed in the existing operation dialog. Development proposals have no GitHub/server execution permission. No additional chat platform or mcpo container is required.

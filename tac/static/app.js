@@ -91,6 +91,7 @@ async function load() {
   document
     .querySelectorAll("nav button")
     .forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+  document.body.classList.toggle("chat-mode", view === "assistant");
   await pages[view]();
 }
 $("#login-form").onsubmit = (e) => {
@@ -162,10 +163,14 @@ $("#pause").onclick = () =>
     );
     await load();
   });
+let operationTimer;
 async function showOperation(id) {
+  clearTimeout(operationTimer);
   const o = await api("operations/" + id);
   const box = $("#detail-body");
-  box.innerHTML = pretty(o);
+  box.innerHTML = view === "assistant"
+    ? `<section dir="rtl" lang="fa"><h3>بررسی مستقل عملیات</h3><p dir="auto">${esc(o.method)} · ${esc(o.payload.chat_id || "بدون مقصد کانال")}</p><p>وضعیت: ${esc(o.status)}</p><p class="chat-reply">${esc(o.payload.text || o.payload.caption || "عملیات بدون متن؛ داده‌های کامل را بررسی کنید.")}</p><details><summary>داده‌های کامل و زمان اجرا</summary>${pretty(o)}</details></section>`
+    : pretty(o);
   const actions = document.createElement("div");
   actions.className = "actions";
   if (o.status === "draft" && role === "owner")
@@ -210,6 +215,7 @@ async function showOperation(id) {
   }
   box.prepend(actions);
   $("#detail").showModal();
+  if (["queued", "running"].includes(o.status)) operationTimer=setTimeout(()=>{if($("#detail").open)act(()=>showOperation(id));},1500);
 }
 const templates = {
   sendMessage: {

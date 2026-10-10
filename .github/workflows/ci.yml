@@ -51,6 +51,7 @@ jobs:
           bash -n scripts/tacctl scripts/install.sh
           node --check tac/static/app.js
           node --check tac/static/control.js
+          node --check tac/static/assistant.js
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
       - name: Browser console test
@@ -58,7 +59,7 @@ jobs:
           python -m venv --system-site-packages .venv
           npm ci
           npm audit --audit-level=high
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
           npm test
       - uses: actions/upload-artifact@v4
         if: always()

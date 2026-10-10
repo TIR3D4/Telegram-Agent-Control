@@ -30,3 +30,7 @@ Revisions `3ad7b764f596` and `9906fa12eb62` add finite grants/quotas/maintenance
 Rollback requires a clean tracked tree and a locally available Git commit matching the manifest. After `ROLLBACK`, it backs up the current installation, stops execution, checks out the recorded commit detached, builds and restores the matching database/media. Execution remains paused. Do not run newer-schema data with older code. A detached checkout does not have an update tracking branch: explicitly choose the intended branch before the next update.
 
 The automated Compose drill tests the mechanics against the same revision. Cross-release rollback to an arbitrary historic image/migration has **not** been verified; test the exact versions and protect data before use. Pre-v0.2 backups lack manifests and are not accepted by the new restore command. Restore them using their original version's documented operator procedure in isolation; do not manufacture a manifest for an untrusted archive.
+
+## Reviewed mobile assistant upgrade
+
+See [one-command pinned upgrade](MOBILE_ASSISTANT.md#installation--upgrade). Existing password/OAuth provisioning is retained without repeat prompts. `--commit` pins the reviewed revision; failures retain a private upgrade report and backups. Cross-revision DB rollback is blocked pending an isolated compatibility review.

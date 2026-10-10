@@ -199,3 +199,19 @@ def record(db, actor, action, resource_id="", details=None):
             trace_id=ctx.get("trace_id"),
         )
     )
+
+
+class ChatTurn(Base):
+    __tablename__ = "chat_turns"
+    id = mapped_column(String(32), primary_key=True, default=uid)
+    key = mapped_column(String(100), unique=True, nullable=False)
+    parent_id = mapped_column(String(32))
+    text = mapped_column(Text, nullable=False)
+    reply = mapped_column(Text)
+    messages = mapped_column(JSON)
+    events = mapped_column(JSON, default=list, nullable=False)
+    usage = mapped_column(JSON, default=dict, nullable=False)
+    status = mapped_column(String(32), index=True, nullable=False)
+    error = mapped_column(String(200))
+    created_at = mapped_column(DateTime(timezone=True), default=now, nullable=False)
+    lease_until = mapped_column(DateTime(timezone=True))

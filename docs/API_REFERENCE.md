@@ -39,3 +39,7 @@ A 201 response is a persisted operation with `id`, `status`, `digest`, `actor`, 
 Lists are bounded and filtered by caller ownership. Operation pagination uses `before` creation timestamp (ties can require narrower querying; not a snapshot-stable cursor). Assets/workflows use limit/offset; logs and updates use monotonically increasing IDs. Current list caps are enforced in code; SDK defaults are smaller. There is no unbounded export endpoint.
 
 Request responses contain `X-Request-ID` and `X-Trace-ID`; trace IDs correlate work but are not authentication. Uploads have configurable byte limits; JSON/MCP body limit is 2 MiB. Asset downloads are attachments. Methods requiring parameters unavailable from the Bot API cannot synthesize them: consult [capabilities](CAPABILITY_MATRIX.md).
+
+## Independent mobile chat
+
+Owner-only `/v1/assistant/config`, `/turns`, `/turns/{id}`, `/turns/{id}/cancel`, `/connection-test`, and `/development-proposals` use existing session/CSRF or human owner authentication. Agent credentials cannot access these routes. The server-held tools invoke existing REST with a separate scoped agent bearer. See [schemas, errors and budgets](MOBILE_ASSISTANT.md#rest-extension); `/openapi.json` is generated from the implemented routes.

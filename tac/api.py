@@ -38,6 +38,7 @@ from .workflows import validate_steps, next_time, on_update
 from .media import preview, store
 
 from .control_api import router as control_router
+from .assistant import router as assistant_router
 from .web_auth import router as session_router
 from .connections import router as connections_router
 
@@ -774,3 +775,6 @@ app.include_router(session_router)
 app.include_router(connections_router)
 
 app.add_middleware(BodyLimit, maximum=(settings().upload_limit_mb + 1) * 1024 * 1024)
+
+
+app.include_router(assistant_router)

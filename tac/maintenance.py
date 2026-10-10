@@ -1,6 +1,6 @@
 import sys
-from sqlalchemy import select
-from .db import Session, RuntimeState, Operation, record
+from sqlalchemy import select, inspect
+from .db import Session, RuntimeState, Operation, ChatTurn, record
 
 
 def restored():
@@ -13,13 +13,18 @@ def restored():
         for op in db.scalars(select(Operation).where(Operation.status == "running")):
             op.status = "uncertain"
             op.error = {"code": "restored_backup", "message": "Reconcile with Telegram before retrying"}
+        # pause-upgrade runs the new image before migrations; older schemas have no chat table yet.
+        if inspect(db.bind).has_table("chat_turns"):
+            for turn in db.scalars(select(ChatTurn).where(ChatTurn.status.in_(["running", "queued"]))):
+                turn.status = "interrupted"
+                turn.error = "maintenance_interrupted_no_automatic_replay"
         record(db, "maintenance", "backup.restored")
 
 
 def prune():
     from datetime import timedelta
     from sqlalchemy import delete
-    from .db import Audit, RateBucket, now
+    from .db import Audit, RateBucket, ChatTurn, now
     from .config import settings
 
     with Session.begin() as db:
@@ -36,6 +41,12 @@ def prune():
             .limit(1000)
         )
         db.execute(delete(Audit).where(Audit.id.in_(expired)))
+        db.execute(
+            delete(ChatTurn).where(
+                ChatTurn.status.not_in(["running", "queued"]),
+                ChatTurn.created_at < now() - timedelta(days=settings().retention_days),
+            )
+        )
     # Approval/operation audit history and idempotency records are retained.
 
 
