@@ -14,19 +14,19 @@
 
 <p align="center"><a href="docs/INSTALL.md">Install</a> · <a href="docs/API.md">API</a> · <a href="docs/AGENTS.md">Connect an agent</a> · <a href="docs/AUTOMATION.md">Automation</a> · <a href="docs/README.fa.md">راهنمای فارسی</a></p>
 
-## Control from ChatGPT — connection candidate
+## Connect your AI — v0.4 review candidate
 
-The target is conversation inside ChatGPT, including on the owner's phone. A private cloud adapter to the existing gateway is prepared; live registration and phone invocation remain unverified. See [connection implementation and test evidence](docs/CHATGPT_CLOUD_CONTROL.md) and [source-level research on managing GitHub, tests and servers from ChatGPT](docs/CHATGPT_PROJECT_MANAGEMENT_RESEARCH.md). No additional VPS installation is required for reading or reviewing this candidate.
+Talk inside **ChatGPT, Codex or Claude**. The console is for connections, drafts, approvals, schedules and diagnostics. Open **اتصال دستیارها** for separate REST, MCP, Codex, Claude and ChatGPT setup profiles, secret-free configuration exports and a real browser-to-MCP check. The existing internal chat is optional and is no longer the primary navigation entry.
 
-## Optional separate Persian assistant
+[Workspace architecture, client setup and limits](docs/CONTROL_WORKSPACE.md) · [Exact v0.4 tests](docs/V04_TEST_RESULTS.md)
 
-An independent Persian RTL chat is available in the console on the `engineering/mobile-assistant` review branch. Configure a provider/model/key from the web; Telegram writes remain drafts pending independent owner approval. This does not enable a missing ChatGPT custom-MCP account feature. API usage is billed separately. [Setup and limits](docs/MOBILE_ASSISTANT.md) · [source comparison and architecture decision](docs/MOBILE_ASSISTANT_RESEARCH.md). Autonomous coding/deployment is not implemented.
+The visual composer supports text/photo, two URL buttons and schedules. Advanced Telegram methods retain the JSON/API editor. The private ChatGPT adapter source now supports bounded file-byte upload; deploying the VPS alone does not update that separately hosted adapter.
 
 ## What it does
 
 Telegram Agent Control provides a web console, REST API, MCP bridge and persistent worker over a generated Telegram Bot API registry. An agent can discover a method, inspect its schema, prepare an operation and monitor the real result. The owner approves external writes. The server stores execution state, media, workflows and an audit trail in PostgreSQL. Version 0.2 adds 42 tested MCP tools, per-agent scopes and ownership, expiring approvals, OAuth resource verification, audited credential lifecycle and verified backups.
 
-**Version 0.2.0 is a hardening candidate for reviewed staging deployment.** It is not a claim that every Telegram method has been exercised against live Telegram. See [test evidence](docs/TEST_RESULTS.md) for the distinction between schema coverage, mocked transport tests and live acceptance.
+**Version 0.4.0 is a review candidate; production upgrade is a separate verified step.** It is not a claim that every Telegram method has been exercised against live Telegram. See [test evidence](docs/TEST_RESULTS.md) for the distinction between schema coverage, mocked transport tests and live acceptance.
 
 | Capability | Included |
 |---|---|
@@ -45,7 +45,7 @@ Telegram Agent Control provides a web console, REST API, MCP bridge and persiste
 Use a Linux VPS with Docker Engine and Compose v2. A practical starting allocation is **2 vCPU, 2–4 GB RAM and 20 GB storage**; media and retention determine disk growth. This is an initial sizing estimate, not a benchmark.
 
 ```bash
-git clone --branch engineering/production-hardening-v0.2 https://github.com/TIR3D4/Telegram-Agent-Control.git
+git clone --branch engineering/unified-control-v0.4 https://github.com/TIR3D4/Telegram-Agent-Control.git
 cd Telegram-Agent-Control
 ./scripts/install.sh
 ```
@@ -99,12 +99,14 @@ The worker executes deterministic schedules without an LLM call. An external age
 
 ```bash
 ./scripts/tacctl             # Interactive terminal menu
-./scripts/tacctl doctor      # Configuration + readiness
+./scripts/tacctl doctor      # Full read-only installation diagnosis + private report
 ./scripts/tacctl logs        # Structured API/worker logs
 ./scripts/tacctl backup      # Consistent DB + media snapshot
 ./scripts/tacctl update      # Backup, fast-forward, build, migrate, restart
 ./scripts/tacctl uninstall   # Remove services, preserve persistent data
 ```
+
+See [one-command diagnostics](docs/DIAGNOSTICS.md) for checks, safe reports, scoped MCP testing and exit codes.
 
 `restore` pauses execution until the owner reviews outstanding operations. `purge` separately asks for a typed confirmation before deleting database/media volumes. See [operations](docs/OPERATIONS.md).
 
@@ -156,7 +158,3 @@ SQLite is available for single-worker development. **PostgreSQL is required for 
 Read [CONTRIBUTING.md](CONTRIBUTING.md). Keep changes small, include behavior tests for execution or security changes, and update the matching documentation. Never include bot tokens, `.env` files, customer exports or production media in a pull request.
 
 MIT licensed. See [LICENSE](LICENSE) and [SECURITY.md](SECURITY.md).
-
-## ChatGPT-first cloud connector candidate
-
-The optional in-panel chat is separate from ChatGPT. See [cloud connection design and exact verification status](docs/CHATGPT_CLOUD_CONTROL.md) for the private plugin adapter, independent owner review and activation requirements. Source is prepared; live connection is not yet verified.

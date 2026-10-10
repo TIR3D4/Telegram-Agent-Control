@@ -1,3 +1,5 @@
+Latest workspace release evidence: [V04_TEST_RESULTS.md](V04_TEST_RESULTS.md).
+
 # Test results — 2026-10-09
 
 ## v0.3 connection update (local verification)

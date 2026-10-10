@@ -15,6 +15,7 @@ values = {
     "TAC_STORAGE_DIR": "/data/media",
     "TAC_OWNER_KEY": owner,
     "TAC_AGENT_KEY": secrets.token_urlsafe(40),
+    "TAC_READER_KEY": secrets.token_urlsafe(40),
     "TAC_ALLOWED_CHATS": "@ci_test",
     "TAC_BOT_TOKEN": "",
     "TAC_PORT": "8787",
@@ -44,6 +45,26 @@ try:
         headers={"Authorization": "Bearer " + owner},
     ) as c:
         ready(c)
+        diagnosis = subprocess.run(
+            ["./scripts/tacctl", "doctor", "--no-telegram", "--json"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        report = json.loads(diagnosis.stdout)
+        print(json.dumps(report), flush=True)
+        assert diagnosis.returncode == 2, report
+        assert report["summary"]["FAIL"] == 0, report
+        assert any(
+            item["name"] == "database.migrations" and item["status"] == "PASS" for item in report["checks"]
+        )
+        assert any(item["name"] == "public.mcp" and item["status"] == "PASS" for item in report["checks"])
+        assert any(item["name"] == "mcp.protocol" and item["status"] == "PASS" for item in report["checks"])
+        assert any(
+            item["name"] == "approval.agent_boundary" and item["status"] == "PASS"
+            for item in report["checks"]
+        )
+        print("Doctor Compose and authenticated MCP probes passed; live Telegram explicitly skipped")
         assistant_config = c.put(
             "/v1/assistant/config",
             json={

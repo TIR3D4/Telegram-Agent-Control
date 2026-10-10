@@ -1,3 +1,19 @@
+## 0.4.0 — Unified control workspace (review candidate)
+
+## Unreleased — installation diagnostics
+
+- Expand `tacctl doctor` into bounded, read-only host/Compose/database/worker/REST/MCP/OAuth/Telegram/backup diagnosis.
+- Save private JSON/text reports with explicit failures, warnings and unverified checks; no automatic repairs or publication.
+- Add optional hidden scoped-credential MCP discovery/tool-call and approval-denial probes, with regression and Compose CI coverage.
+
+- Separate REST, MCP, Codex, Claude and ChatGPT connection profiles with secret-free exports.
+- Actual browser REST identity / MCP initialization / tool-discovery test; no false host-wide connection claim.
+- Persian RTL responsive shell, operational dashboard, status-filtered post cards, visual text/photo composer and readable owner review.
+- Keep advanced API/JSON and optional internal chat without deleting data or changing execution policies.
+- Private cloud adapter: bounded Base64 file upload and individual Telegram type discovery.
+- Add pinned v0.4 branch to upgrade allowlist; preserve existing backup, migration, OAuth and pause behavior.
+- See docs/V04_TEST_RESULTS.md for tested and blocked environments.
+
 # Changelog
 
 ## Setup hotfix — non-seekable SSH terminal

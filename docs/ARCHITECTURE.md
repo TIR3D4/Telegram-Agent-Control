@@ -1,4 +1,4 @@
-# Architecture — v0.2
+# Architecture — v0.4
 
 An API-first modular monolith. PostgreSQL is the durable control plane; a separate worker process executes approved operations. There is no Redis, broker, embedded model or second workflow framework.
 
@@ -70,3 +70,7 @@ See [research](RESEARCH_COMPARISON.md), [ADRs](adr/0001-control-gateway.md) and 
 ## Optional in-panel mobile chat
 
 See [mobile assistant ADR](MOBILE_ASSISTANT_RESEARCH.md). Owner-authenticated chat routes enqueue persistent chat turns. A bounded worker thread calls the configured HTTPS provider; explicit tools re-enter REST with a server-held scoped agent bearer. No human session or provider secret is included in model context. Independent owner approval is performed in the existing operation dialog. Development proposals have no GitHub/server execution permission. No additional chat platform or mcpo container is required.
+
+## Unified client workspace
+
+See [v0.4 client architecture](CONTROL_WORKSPACE.md). REST/MCP remain shared services; Codex, Claude and ChatGPT use separate setup profiles, not separate business logic. The internal chat is retained under optional tools. There is no new database migration or remote shell/deployment authority.

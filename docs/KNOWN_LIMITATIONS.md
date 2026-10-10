@@ -1,3 +1,11 @@
+## v0.4 workspace status
+
+- See CONTROL_WORKSPACE.md and V04_TEST_RESULTS.md. Client profiles are not a claim of live Codex/Claude registration.
+- Native ChatGPT host registration remains account-dependent; existing private connection is preserved.
+- Visual composer covers text and single-photo posts. Advanced media, workflows and settings retain existing forms/API; some are English/JSON.
+- Direct agent/UI server upgrades are not implemented. No generic shell is exposed.
+- Cloud file upload is bounded to 1 MiB and requires the AI host to supply real file bytes. Deploy cloud adapter separately.
+
 # Known limitations and remaining acceptance gates
 
 This is a production-oriented hardening candidate, **not an unconditional production-readiness claim**.

@@ -52,6 +52,7 @@ jobs:
           node --check tac/static/app.js
           node --check tac/static/control.js
           node --check tac/static/assistant.js
+          node --check tac/static/workspace.js
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
       - name: Cloud connector security and protocol tests

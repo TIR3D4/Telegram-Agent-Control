@@ -34,10 +34,7 @@ case "$command" in
  logs) need_docker; compose logs --tail 200 -f api worker ;;
  config) "${EDITOR:-nano}" .env ;;
  doctor)
-  need_docker
-  compose ps
-  compose exec -T api python -c "from tac.config import settings; settings().check(); print('Configuration valid')"
-  compose exec -T api curl -fsS http://localhost:8787/health/ready
+  python3 scripts/doctor.py "${@:2}"
   ;;
  setup)
   need_docker
