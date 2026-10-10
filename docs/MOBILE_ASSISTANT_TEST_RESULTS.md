@@ -30,3 +30,23 @@ The Telegram adapter and paid provider responses in these tests are **mocked**. 
 ## Deployment boundary
 
 The upgrade helper has explicit branch/commit guards, existing configuration preservation, backup handling, migration-head inspection, readiness and fresh worker-heartbeat checks, paused execution and private failure reports. Local tests verify selected helpers/migration/rollback guards. Full Docker install/upgrade on the owner's Ubuntu server has not been performed. CI Compose tests validate image/start/backup/restore/same-revision rollback, not all external OAuth/client registration or production networking.
+
+## Completed GitHub CI
+
+Code commit: `b22099b5c1d0092782ba91950c895187c966a976`.
+[Run 38006832752](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/38006832752), job `114077436584`: **success**, completed 2026-10-10 UTC.
+
+Actual decoded job logs record:
+
+- SQLite: **509 passed, 4 skipped** (37.32s).
+- PostgreSQL: **513 passed** (54.82s), including the new concurrent chat claim test.
+- Chromium + iPhone-emulated WebKit: **12 passed** (20.8s); six tests per browser.
+- Ruff/format, five-module mypy, Bandit, Python and npm dependency audit: passed; no known vulnerabilities reported by those scans.
+- PostgreSQL migration roundtrip and `alembic check`: passed.
+- Docker image build and Compose readiness: passed.
+- Verified backup/restore, unchanged grant ID and decryptable restored fake provider key/vault: passed.
+- Same-revision rollback and data-preserving uninstall/reinstall: passed.
+
+Browser evidence artifact: `browser-evidence`, artifact ID `11651348952`, available from the run. These are real browser screenshots of the test application, not production or fabricated UI.
+
+CI uses isolated test credentials and does not prove paid inference, live Telegram connectivity, physical iPhone Safari, existing external OAuth provisioning, or the complete upgrade on the owner's Ubuntu host. Earlier candidate runs also passed; the counts above belong to the exact final code commit. A later documentation-only commit records this evidence without changing executable code.

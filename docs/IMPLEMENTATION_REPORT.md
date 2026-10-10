@@ -44,3 +44,5 @@ Use the branch-specific commands in [INSTALLATION.md](INSTALLATION.md) on stagin
 ## Mobile assistant candidate
 
 Selected an additive Persian in-panel chat over existing REST after [source comparison](MOBILE_ASSISTANT_RESEARCH.md). [Operation/setup guide](MOBILE_ASSISTANT.md) and [verification record](MOBILE_ASSISTANT_TEST_RESULTS.md) describe implemented behavior and remaining acceptance checks. Scoped server-held tools cannot approve, execute arbitrary shell or deploy. Development requests are proposals for a separate branch/PR workflow, not an autonomous coding runner. ChatGPT's missing account registration remains an external limitation. No production installation or real Telegram publication was performed for this candidate.
+
+Final mobile code commit `b22099b5c1d0092782ba91950c895187c966a976` passed [CI run 38006832752](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/38006832752): 513 PostgreSQL tests, 12 Chromium/WebKit tests, migration and Docker backup/restore (including encrypted assistant configuration). This report does not claim live provider/Telegram or production upgrade acceptance.
