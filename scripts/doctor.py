@@ -21,6 +21,32 @@ def command(args, timeout=20, stdin=None):
     return subprocess.run(args, input=stdin, capture_output=True, text=True, timeout=timeout, cwd=ROOT)
 
 
+def service_status(rows):
+    present = {row["Service"]: row for row in rows}
+    bad = []
+    starting = []
+    for name in ("api", "worker", "postgres"):
+        row = present.get(name, {})
+        if row.get("State") != "running" or row.get("Health") == "unhealthy":
+            bad.append(name)
+    for name in ("oauth", "oauth-db", "caddy"):
+        row = present.get(name)
+        if row and (row.get("State") != "running" or row.get("Health") == "unhealthy"):
+            bad.append(name)
+    for name in ("api", "worker", "postgres", "oauth", "oauth-db", "caddy"):
+        row = present.get(name, {})
+        if row.get("State") == "running" and row.get("Health") == "starting":
+            starting.append(name)
+    migrate = present.get("migrate")
+    if migrate and (migrate.get("State") != "exited" or int(migrate.get("ExitCode", -1)) != 0):
+        bad.append("migrate")
+    if bad:
+        return "FAIL", "Services requiring attention: " + ", ".join(bad)
+    if starting:
+        return "WARN", "Container health checks are still starting: " + ", ".join(starting)
+    return "PASS", "Required services running; observed optional services and migration healthy."
+
+
 def collect(agent=False, telegram=True):
     checks = []
 
@@ -98,24 +124,7 @@ def collect(agent=False, telegram=True):
             raise ValueError("Compose inaccessible")
         raw = result.stdout.strip()
         rows = json.loads(raw) if raw.startswith("[") else [json.loads(line) for line in raw.splitlines()]
-        present = {row["Service"]: row for row in rows}
-        bad = []
-        for name in ("api", "worker", "postgres"):
-            row = present.get(name, {})
-            if row.get("State") != "running" or row.get("Health") in {"unhealthy", "starting"}:
-                bad.append(name)
-        for name in ("oauth", "oauth-db", "caddy"):
-            row = present.get(name)
-            if row and (row.get("State") != "running" or row.get("Health") in {"unhealthy", "starting"}):
-                bad.append(name)
-        migrate = present.get("migrate")
-        if migrate and (migrate.get("State") != "exited" or int(migrate.get("ExitCode", -1)) != 0):
-            bad.append("migrate")
-        return (
-            ("FAIL", "Services requiring attention: " + ", ".join(bad))
-            if bad
-            else ("PASS", "Required services running; observed optional services and migration healthy.")
-        )
+        return service_status(rows)
 
     check(
         "compose.services",

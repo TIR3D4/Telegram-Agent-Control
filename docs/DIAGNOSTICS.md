@@ -61,7 +61,7 @@ This diagnostic is a local operator command. It does not add shell execution or 
 
 Local commands on 2026-10-10:
 
-- `PYTHONPATH=. .venv/bin/pytest -q`: **529 passed, 4 skipped** (PostgreSQL-only cases skipped locally).
-- New diagnostic tests: **14 passed**, including real ASGI MCP initialization/discovery, a fixture-backed read-only tool call, actual agent approval denial, raw exception suppression and timeout reporting.
+- `PYTHONPATH=. .venv/bin/pytest -q`: **533 passed, 4 skipped** (PostgreSQL-only cases skipped locally).
+- New diagnostic tests: **18 passed**, including real ASGI MCP initialization/discovery, a fixture-backed read-only tool call, actual agent approval denial, raw exception suppression and timeout reporting.
 - `ruff check tac scripts tests`, `ruff format --check tac scripts tests`, `bandit -q -r tac scripts -ll`, `bash -n scripts/tacctl`: passed.
-- Live Telegram calls in the new diagnostic tests are mocked. The production server has not yet run this new command. CI additionally runs doctor against the installed Compose stack with Telegram disabled and verifies that failures are zero while skipped coverage remains explicit.
+- Live Telegram calls in the new diagnostic tests are mocked. The production server has not yet run this new command. CI additionally runs doctor against the installed Compose stack with Telegram disabled, a generated test-only reader credential, real HTTP MCP discovery/tool execution and agent approval denial. It verifies that failures are zero while skipped coverage remains explicit. Container health `starting` is a warning; `unhealthy`, missing workers and failed migrations are failures.

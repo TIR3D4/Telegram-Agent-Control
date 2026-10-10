@@ -164,3 +164,23 @@ def test_host_timeout_reports_failure_without_raw_output(monkeypatch, tmp_path):
     assert host.summarize(report) == 1
     assert "credential-not-for-report" not in json.dumps(report)
     assert any(c["name"] == "application.probes" for c in report["checks"])
+
+
+@pytest.mark.parametrize(
+    "health,expected", [("starting", "WARN"), ("healthy", "PASS"), ("unhealthy", "FAIL")]
+)
+def test_compose_starting_is_not_a_failure(health, expected):
+    rows = [
+        {"Service": name, "State": "running", "Health": health if name == "api" else ""}
+        for name in ("api", "worker", "postgres")
+    ]
+    rows.append({"Service": "migrate", "State": "exited", "ExitCode": 0})
+    assert host.service_status(rows)[0] == expected
+
+
+def test_compose_missing_worker_and_failed_migration_fail():
+    rows = [{"Service": name, "State": "running"} for name in ("api", "postgres")]
+    rows.append({"Service": "migrate", "State": "exited", "ExitCode": 1})
+    status, detail = host.service_status(rows)
+    assert status == "FAIL"
+    assert "worker" in detail and "migrate" in detail
