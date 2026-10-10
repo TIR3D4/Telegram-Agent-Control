@@ -206,12 +206,24 @@ def main():
     ):
         run(sys.executable, "scripts/setup_access.py", "--console-only")
     wait_ready()
-    run("bash", "scripts/tacctl", "doctor")
+    diagnose_installation()
     REPORT["status"] = "succeeded"
     save_report()
     print(
         "Upgrade complete. Sign in to the web console; execution stays PAUSED until you review and resume it."
     )
+
+
+def diagnose_installation():
+    REPORT["step"] = "installation diagnosis"
+    result = subprocess.run(["bash", "scripts/tacctl", "doctor"], timeout=480)
+    REPORT["diagnostics_exit_code"] = result.returncode
+    if result.returncode not in {0, 2}:
+        raise subprocess.CalledProcessError(result.returncode, "installation diagnosis")
+    if result.returncode == 2:
+        print(
+            "Diagnostics completed with warnings/unverified checks; review the private report. Execution remains paused."
+        )
 
 
 def save_report():
@@ -223,7 +235,7 @@ def save_report():
 if __name__ == "__main__":
     try:
         main()
-    except (subprocess.CalledProcessError, SystemExit, OSError) as error:
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, SystemExit, OSError) as error:
         REPORT["status"] = "failed"
         REPORT["error_type"] = type(error).__name__
         save_report()

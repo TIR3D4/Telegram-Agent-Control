@@ -184,3 +184,17 @@ def test_compose_missing_worker_and_failed_migration_fail():
     status, detail = host.service_status(rows)
     assert status == "FAIL"
     assert "worker" in detail and "migrate" in detail
+
+
+@pytest.mark.parametrize("code,allowed", [(0, True), (2, True), (1, False), (127, False)])
+def test_upgrade_accepts_diagnostic_warning_but_not_failure(monkeypatch, code, allowed):
+    spec = importlib.util.spec_from_file_location("upgrade_doctor_test", Path("scripts/upgrade.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a[0], code))
+    if allowed:
+        module.diagnose_installation()
+    else:
+        with pytest.raises(subprocess.CalledProcessError):
+            module.diagnose_installation()
+    assert module.REPORT["diagnostics_exit_code"] == code
