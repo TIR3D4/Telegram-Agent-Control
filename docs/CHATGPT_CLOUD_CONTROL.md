@@ -4,6 +4,8 @@ Reviewed 2026-10-10. Baseline: `39f35a27e5c0fa4dfd07cf2457b6aa2431da455b`.
 
 ## Live activation and edge-runtime repair (2026-10-10)
 
+Version 2 was subsequently published successfully. A real GET to the private Site's `/api/gateway-health`, authenticated using Sites service access, returned HTTP 200 with `{"reachable":true,"ready":true,"http_status":200}`. This verifies an actual credential-free fetch from the deployed Site to the configured gateway readiness endpoint, not just a local/mock test. It does **not** prove the user's scoped key was saved, ChatGPT installed the plugin, or a Telegram operation executed.
+
 Owner-private publication of version 1 succeeded after owner authorization; Sites returned a canonical plugin. Installation and a successful scoped gateway call are still unverified. The owner encountered a connection-form failure. Worker logs showed HTTP 400 within 2–3 ms; source inspection and an actual local workerd reproduction identified `redirect: "error"` as unsupported by this runtime. Prior Node mock tests did not catch this incompatibility.
 
 The connector now uses `redirect: "manual"` and explicitly refuses 3xx responses for both the gateway and image download, preserving credential isolation and SSRF constraints. Failed reads no longer imply a Telegram operation might have been submitted. Added a credential-free readiness probe at `/api/gateway-health`, behind private Sites access, which only requests the configured origin's readiness URL and returns bounded status fields.
