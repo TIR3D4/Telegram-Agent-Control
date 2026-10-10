@@ -1,5 +1,11 @@
 ## 0.4.0 — Unified control workspace (review candidate)
 
+## Unreleased — development audit
+
+- Support Windows Git Bash development setup with Python selection and native virtualenv paths; skip the POSIX-only terminal test when unavailable.
+- Return a safe MCP gateway error for HTML, empty or malformed error responses without exposing the body or automatically retrying a potentially submitted operation.
+- Gate direct restore on the backup's exact checkout commit before stopping services; retain integrity-only inspection for older snapshots and require separate cross-revision compatibility review.
+
 ## Unreleased — Codex handoff
 
 - Add project-local pinned Codex Context Optimizer runtime, license, provenance and compact source/task context.

@@ -49,7 +49,7 @@ case "$command" in
   need_docker
   dir="${2:?Usage: tacctl restore backups/TIMESTAMP}"
   [[ -f "$dir/database.dump" && -f "$dir/media.tar.gz" ]] || { printf '%s\n' 'Invalid backup directory'; exit 1; }
-  python3 scripts/backup_manifest.py verify "$dir"
+  python3 scripts/backup_manifest.py verify-restore "$dir"
   read -r -p 'Replace database and media with this backup? Type RESTORE: ' answer
   [[ "$answer" == RESTORE ]] || exit 1
   compose stop api worker

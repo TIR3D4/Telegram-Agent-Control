@@ -3,11 +3,13 @@
 import errno
 import os
 from pathlib import Path
-import pty
 import select
 import signal
 import sys
 import time
+import pytest
+
+pty = pytest.importorskip("pty", reason="Controlling-terminal checks require POSIX termios")
 
 
 def test_setup_prompt_works_with_redirected_stdin_and_hidden_password():

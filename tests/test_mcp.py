@@ -1,3 +1,32 @@
+import httpx
+import pytest
+
+
+@pytest.mark.parametrize(
+    "status,body", [(502, b"<html>upstream unavailable</html>"), (503, b"[]"), (200, b"")]
+)
+def test_gateway_malformed_response_is_safe_and_never_retried(monkeypatch, status, body):
+    from tac import mcp_server
+
+    requests = []
+    original = httpx.Client
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(status, content=body)
+
+    monkeypatch.setattr(
+        mcp_server.httpx, "Client", lambda **kw: original(**kw, transport=httpx.MockTransport(respond))
+    )
+    result = mcp_server.call("POST", "/v1/operations", {"idempotency_key": "gateway-test"})
+    assert result["ok"] is False
+    assert result["error"]["code"] == "gateway_invalid_response"
+    assert result["error"]["status"] == status
+    assert "original idempotency key" in result["error"]["retry"]
+    assert len(requests) == 1
+    assert "upstream unavailable" not in str(result)
+
+
 def rpc(client, agent, method, params=None, id=1):
     return client.post(
         "/mcp/",

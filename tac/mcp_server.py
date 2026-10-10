@@ -65,16 +65,31 @@ def call(verb, path, body=None, params=None):
     ) as client:
         try:
             r = client.request(verb, base + path, json=body, params=params)
+            try:
+                data = r.json()
+                if r.status_code >= 400 and not isinstance(data, dict):
+                    raise ValueError("Invalid gateway error envelope")
+            except ValueError:
+                # Proxies may return HTML or an empty body after a submitted write.
+                # Never echo that body or infer that the operation was not created.
+                return {
+                    "ok": False,
+                    "error": {
+                        "code": "gateway_invalid_response",
+                        "status": r.status_code,
+                        "retry": "Inspect operation status using the original idempotency key before resubmitting.",
+                    },
+                }
             if r.status_code >= 400:
                 return {
                     "ok": False,
                     "error": {
                         "status": r.status_code,
-                        "detail": r.json().get("detail", "Request rejected"),
+                        "detail": data.get("detail", "Request rejected"),
                         "retry_after": r.headers.get("retry-after"),
                     },
                 }
-            return bounded(r.json())
+            return bounded(data)
         except httpx.HTTPError as e:
             return {
                 "ok": False,
