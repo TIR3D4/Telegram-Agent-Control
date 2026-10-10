@@ -44,6 +44,20 @@ try:
         headers={"Authorization": "Bearer " + owner},
     ) as c:
         ready(c)
+        diagnosis = subprocess.run(
+            ["./scripts/tacctl", "doctor", "--no-telegram", "--json"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        assert diagnosis.returncode == 2, "Doctor must distinguish expected skips/warnings from failures"
+        report = json.loads(diagnosis.stdout)
+        assert report["summary"]["FAIL"] == 0, report
+        assert any(
+            item["name"] == "database.migrations" and item["status"] == "PASS" for item in report["checks"]
+        )
+        assert any(item["name"] == "public.mcp" and item["status"] == "PASS" for item in report["checks"])
+        print("Doctor Compose probes passed; unavailable credential/live Telegram explicitly skipped")
         assistant_config = c.put(
             "/v1/assistant/config",
             json={

@@ -99,12 +99,14 @@ The worker executes deterministic schedules without an LLM call. An external age
 
 ```bash
 ./scripts/tacctl             # Interactive terminal menu
-./scripts/tacctl doctor      # Configuration + readiness
+./scripts/tacctl doctor      # Full read-only installation diagnosis + private report
 ./scripts/tacctl logs        # Structured API/worker logs
 ./scripts/tacctl backup      # Consistent DB + media snapshot
 ./scripts/tacctl update      # Backup, fast-forward, build, migrate, restart
 ./scripts/tacctl uninstall   # Remove services, preserve persistent data
 ```
+
+See [one-command diagnostics](docs/DIAGNOSTICS.md) for checks, safe reports, scoped MCP testing and exit codes.
 
 `restore` pauses execution until the owner reviews outstanding operations. `purge` separately asks for a typed confirmation before deleting database/media volumes. See [operations](docs/OPERATIONS.md).
 

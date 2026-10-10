@@ -16,3 +16,5 @@ playwright-report
 compose.override.yaml
 Caddyfile.backup-*
 Caddyfile.before-*
+
+diagnostics
