@@ -302,7 +302,7 @@ test("image fetch never receives TAC auth; upload only to fixed gateway", async 
     },
     async (url, init) => {
       calls.push(url);
-      assert.equal(init.redirect, "error");
+      assert.equal(init.redirect, "manual");
       if (calls.length === 1) {
         assert.equal(init.headers, undefined);
         return new Response(new Uint8Array([137, 80, 78, 71]), {

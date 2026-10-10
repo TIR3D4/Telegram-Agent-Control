@@ -2,6 +2,14 @@
 
 Reviewed 2026-10-10. Baseline: `39f35a27e5c0fa4dfd07cf2457b6aa2431da455b`.
 
+## Live activation and edge-runtime repair (2026-10-10)
+
+Owner-private publication of version 1 succeeded after owner authorization; Sites returned a canonical plugin. Installation and a successful scoped gateway call are still unverified. The owner encountered a connection-form failure. Worker logs showed HTTP 400 within 2–3 ms; source inspection and an actual local workerd reproduction identified `redirect: "error"` as unsupported by this runtime. Prior Node mock tests did not catch this incompatibility.
+
+The connector now uses `redirect: "manual"` and explicitly refuses 3xx responses for both the gateway and image download, preserving credential isolation and SSRF constraints. Failed reads no longer imply a Telegram operation might have been submitted. Added a credential-free readiness probe at `/api/gateway-health`, behind private Sites access, which only requests the configured origin's readiness URL and returns bounded status fields.
+
+Validation: 15 existing Node tests plus 1 actual Miniflare/workerd regression test passed (16 total). The runtime test intercepts outbound HTTP, verifies success, rejects gateway/image redirects without following them, and verifies image requests have no agent bearer. No real key or Telegram call is involved. TypeScript check passed. Run the runtime test in the full Sites starter with Wrangler/Miniflare installed: `node --test tests/edge-runtime.mjs`. Live gateway readiness and scoped authentication remain separate checks.
+
 ## Acceptance means the owner works in ChatGPT
 
 The owner's desired loop is: discuss a daily plan in ChatGPT, create/correct text and images there, prepare exact drafts/schedules on TAC, independently approve, and obtain actual delivery status/message links. A separate provider-funded chat inside the panel is not acceptance of that requirement. Keep its existing data/config intact, but do not require it or continue developing it for this goal.

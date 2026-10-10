@@ -35,6 +35,8 @@ Initial control-plane release: Bot API 10.3 registry, authenticated REST/MCP, we
 
 ## ChatGPT cloud control candidate — 2026-10-10
 
+- Fix Workers-incompatible redirect mode; reject redirects explicitly and verify with an actual workerd regression test. Add a private credential-free gateway readiness probe.
+
 - Restore in-ChatGPT control as the goal; standalone chat remains optional.
 - Add a private cloud MCP-to-REST connector with per-user encrypted scoped credentials, bounded tools and media import.
 - Add owner review deep links, Tehran schedule display and authenticated attachment previews.

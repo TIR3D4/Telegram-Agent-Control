@@ -280,14 +280,18 @@ export async function gateway(env, token, verb, path, body, fetcher = fetch) {
           ? body
           : JSON.stringify(body)
         : undefined,
-      redirect: "error",
+      redirect: "manual",
       signal: AbortSignal.timeout(15000),
     });
   } catch {
     fail(
-      "Gateway unreachable or response lost. Inspect existing operation/key before retrying.",
+      verb === "GET"
+        ? "Gateway read failed; no Telegram operation was submitted."
+        : "Gateway unreachable or response lost. Inspect existing operation/key before retrying.",
     );
   }
+  if (r.status >= 300 && r.status < 400)
+    fail("Gateway redirect blocked; credentials were not forwarded");
   if (!r.headers.get("content-type")?.includes("application/json"))
     fail("Gateway returned non-JSON; connectivity is NOT verified");
   let data;
@@ -414,12 +418,14 @@ export async function importImage(env, token, args, fetcher = fetch) {
   let r;
   try {
     r = await fetcher(url, {
-      redirect: "error",
+      redirect: "manual",
       signal: AbortSignal.timeout(15000),
     });
   } catch {
     fail("Image unavailable; attach it through the private setup page");
   }
+  if (r.status >= 300 && r.status < 400)
+    fail("Image redirect blocked; destination was not requested");
   const mime = r.headers.get("content-type")?.split(";")[0];
   if (!r.ok || !["image/png", "image/jpeg", "image/webp"].includes(mime))
     fail("Expected a downloadable PNG, JPEG or WebP image");
