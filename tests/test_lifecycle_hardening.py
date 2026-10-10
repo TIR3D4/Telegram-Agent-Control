@@ -2,6 +2,9 @@ import importlib.util
 import io
 import json
 import tarfile
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 from datetime import timedelta
 import pytest
@@ -42,6 +45,50 @@ def test_manifest_detects_corruption(tmp_path):
     (root / "database.dump").write_bytes(b"corrupted")
     with pytest.raises(ValueError, match="checksum"):
         manifest.verify(root)
+
+
+@pytest.mark.parametrize("current,allowed", [("a" * 40, True), ("b" * 40, False)])
+def test_restore_requires_current_backup_revision(tmp_path, monkeypatch, current, allowed):
+    root = backup(tmp_path)
+    monkeypatch.setattr(manifest.subprocess, "check_output", lambda *a, **kw: current + "\n")
+    # Integrity-only inspection remains available for older snapshots.
+    assert manifest.verify(root)["commit"] == "a" * 40
+    if allowed:
+        assert manifest.verify(root, require_current_commit=True)["commit"] == current
+    else:
+        with pytest.raises(ValueError, match="compatibility"):
+            manifest.verify(root, require_current_commit=True)
+
+
+def test_restore_command_rejects_revision_before_stopping_services(tmp_path):
+    bash = shutil.which("bash")
+    if not bash:
+        pytest.skip("Bash is required to exercise the operator shell entrypoint")
+    root = backup(tmp_path)
+    # Only the version probe is allowed. Never invoke a real Docker daemon.
+    script = """
+export TAC_TEST_PYTHON="$2"
+python3() { "$TAC_TEST_PYTHON" "$@"; }
+export -f python3
+docker() {
+  if [[ "$*" == "compose version" ]]; then return 0; fi
+  printf '%s\\n' UNEXPECTED_DOCKER_MUTATION
+  return 55
+}
+export -f docker
+bash scripts/tacctl restore "$1"
+"""
+    result = subprocess.run(
+        [bash, "-c", script, "restore-test", str(root), Path(sys.executable).as_posix()],
+        cwd=Path(__file__).resolve().parents[1],
+        input="RESTORE\n",
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode != 0
+    assert "Cross-revision restore is blocked" in result.stderr
+    assert "UNEXPECTED_DOCKER_MUTATION" not in result.stdout
 
 
 @pytest.mark.parametrize(
