@@ -31,3 +31,9 @@ Existing private ChatGPT plugin `inspect_system` returned version **0.3.0**, an 
 - Cloud adapter release and VPS release are separate. See implementation report for deployment outcome; tests alone are not deployment evidence.
 
 No database model or migration revision changed. Existing migration/backup/upgrade behavior tests remain in the full suite. No database downgrade or restore was run on production.
+
+## Private adapter build and live deployment
+
+In the existing Site source checkout: `node --test tests/connector.test.mjs tests/edge-runtime.mjs` — **19 passed**, including actual workerd with mocked external transport. `npx tsc --noEmit` and native Site production build passed. The owner-private deployment completed successfully. A subsequent real plugin `inspect_system` call confirmed continuity of the stored grant and gateway connection; production VPS still reports v0.3. New tool invocation has not been observed because host discovery in this conversation has not refreshed.
+
+A direct SSH connection probe failed with `Network is unreachable`; no upgrade command was executed on the VPS.
