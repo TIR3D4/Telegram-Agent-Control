@@ -31,6 +31,7 @@ test('visual photo composer binds upload and cannot publish before independent a
  await page.screenshot({path:`test-results/composer-${test.info().project.name}.png`,fullPage:true});
  await page.locator('#post-save').click();await expect(page.locator('#detail')).toBeVisible();
  const pre=await page.locator('#detail-body pre').textContent();const op=JSON.parse(pre);
+ await expect(page.locator('#post-text')).toBeDisabled();
  expect(op.method).toBe('sendPhoto');expect(op.status).toBe('draft');expect(op.attempts).toBe(0);expect(op.attachments.photo).toMatch(/^[a-f0-9]{32}$/);
  expect(op.payload.reply_markup.inline_keyboard[0][0].url).toBe('https://t.me/example');
  const denied=await request.post('/v1/operations/'+op.id+'/approve',{headers:{Authorization:'Bearer '+'ui-test-agent-'+'x'.repeat(40)},data:{expected_digest:op.digest}});expect(denied.status()).toBe(403);
@@ -42,4 +43,12 @@ test('mobile overview fits viewport and optional chat is not the default',async(
  await expect(page.locator('.workspace-hero')).toBeVisible();await expect(page.locator('.assistant')).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:`test-results/workspace-${test.info().project.name}.png`,fullPage:true});
+});
+test('password session can download a media asset without an empty bearer override',async({page})=>{
+ await login(page);await page.locator('[data-view="media"]').click();
+ const name='session-download-'+Date.now()+'.txt';
+ await page.locator('#library-upload').setInputFiles({name,mimeType:'text/plain',buffer:Buffer.from('private test fixture')});
+ const row=page.locator('tr').filter({hasText:name});await expect(row).toBeVisible();
+ const download=page.waitForEvent('download');await row.locator('[data-download]').click();
+ expect((await download).suggestedFilename()).toBe(name);
 });

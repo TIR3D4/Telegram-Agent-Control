@@ -80,6 +80,7 @@ function pretty(v) {
 }
 function btn(text, fn, style = "") {
   const b = document.createElement("button");
+  b.type = "button";
   b.textContent = text;
   b.className = style;
   b.onclick = () => act(fn);

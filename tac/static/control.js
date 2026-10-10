@@ -124,7 +124,7 @@ Object.assign(pages, {
         (b.onclick = () =>
           act(async () => {
             const r = await fetch("/v1/assets/" + b.dataset.download, {
-              headers: { Authorization: "Bearer " + key },
+              headers: key ? { Authorization: "Bearer " + key } : {},
             });
             if (!r.ok) throw Error("Download not authorized");
             const u = URL.createObjectURL(await r.blob());

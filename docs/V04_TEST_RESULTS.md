@@ -37,3 +37,9 @@ No database model or migration revision changed. Existing migration/backup/upgra
 In the existing Site source checkout: `node --test tests/connector.test.mjs tests/edge-runtime.mjs` — **19 passed**, including actual workerd with mocked external transport. `npx tsc --noEmit` and native Site production build passed. The owner-private deployment completed successfully. A subsequent real plugin `inspect_system` call confirmed continuity of the stored grant and gateway connection; production VPS still reports v0.3. New tool invocation has not been observed because host discovery in this conversation has not refreshed.
 
 A direct SSH connection probe failed with `Network is unreachable`; no upgrade command was executed on the VPS.
+
+## Follow-up UI regression checks
+
+`npm test -- --project=chromium --grep 'password session can download|visual photo'` — **2 passed**, 4.7 s. Fixed an existing empty-Bearer-header override which broke media download for password-session owners. Composer freezes saved inputs, retains the saved ID and disables file selection during upload; new-draft buttons have explicit non-submit type.
+
+GitHub CI run `38038505619` at implementation commit `3ed57b5`: PostgreSQL behavior/concurrency and migration roundtrip reported success. Browser/Docker stages were still running at this report update; this is not a claim of a fully green final-head CI run.

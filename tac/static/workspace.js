@@ -90,13 +90,13 @@ pages.compose=async()=>{
     if(objectURL)URL.revokeObjectURL(objectURL);
     $('#visual-post-image').hidden=true;
     if(!file)return;
-    pending=true;$('#post-save').disabled=true;$('#post-upload-status').textContent='در حال بارگذاری…';
+    pending=true;$('#post-file').disabled=true;$('#post-save').disabled=true;$('#post-upload-status').textContent='در حال بارگذاری…';
     try{
       const form=new FormData();form.append('file',file);asset=await api('assets','POST',form);
       objectURL=URL.createObjectURL(file);$('#visual-post-image').src=objectURL;$('#visual-post-image').hidden=false;
       $('#post-upload-status').textContent='تصویر آماده است';
     }catch(e){$('#post-upload-status').textContent='آپلود ناموفق؛ دوباره فایل را انتخاب کنید.';throw e;}
-    finally{pending=false;$('#post-save').disabled=false;}
+    finally{pending=false;$('#post-file').disabled=false;$('#post-save').disabled=false;}
   });
   $('#post-form').onsubmit=e=>{e.preventDefault();act(async()=>{
     if(savedId){await showOperation(savedId);return;}
@@ -113,6 +113,8 @@ pages.compose=async()=>{
       const o=await api('operations','POST',{method,payload,attachments:asset?{photo:asset.id}:{},run_at:$('#post-time').value?new Date($('#post-time').value).toISOString():null,idempotency_key:requestKey});
       savedId=o.id;notice('پیش‌نویس ذخیره شد؛ نسخهٔ دقیق را بررسی کنید.');await showOperation(o.id);
       $('#post-save').textContent='مشاهدهٔ پیش‌نویس ذخیره‌شده';
+      $('#post-form').querySelectorAll('input,textarea,select').forEach(el=>el.disabled=true);
+      $('#post-form').append(btn('ساخت پست دیگری',pages.compose));
     }finally{$('#post-save').disabled=false;}
   });};
 };
