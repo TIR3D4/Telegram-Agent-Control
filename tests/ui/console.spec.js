@@ -234,3 +234,25 @@ test("phone owner explicitly reviews and resumes a paused server from chat", asy
   await expect(page.locator('#chat-resume')).toHaveCount(0);
   await expect(page.locator('#chat-send')).toBeEnabled();
 });
+
+test("ChatGPT review link opens exact draft after login without approving it", async ({ page, request }) => {
+  const headers = { Authorization: "Bearer " + owner };
+  const created = await request.post("/v1/operations", { headers, data: {
+    method: "sendMessage", payload: { chat_id: "@ui_test", text: "پست برنامه‌ریزی‌شده از ChatGPT" },
+    run_at: "2099-10-10T18:00:00+03:30", idempotency_key: "cloud-review-" + Date.now(),
+  }});
+  expect(created.ok()).toBeTruthy();
+  const op = await created.json();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?review=" + op.id);
+  await expect(page.locator("#detail")).not.toBeVisible();
+  await page.locator("#login summary").click();
+  await page.locator("#key").fill(owner);
+  await page.locator("#login-form button").click();
+  await expect(page.locator("#detail")).toBeVisible();
+  await expect(page.locator("#detail-body")).toContainText("پست برنامه‌ریزی‌شده از ChatGPT");
+  await expect(page.locator("#detail-body")).toContainText("تهران");
+  const status = await request.get("/v1/operations/" + op.id, { headers });
+  expect((await status.json()).status).toBe("draft");
+  await page.screenshot({path:"test-results/chatgpt-owner-review.png",fullPage:true});
+});

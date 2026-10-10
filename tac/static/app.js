@@ -105,6 +105,7 @@ $("#login-form").onsubmit = (e) => {
     content.hidden = false;
     $("#connection").textContent = "● Connected · " + role;
     await load();
+    await openRequestedReview();
   });
 };
 async function connected() {
@@ -114,6 +115,7 @@ async function connected() {
   content.hidden = false;
   $("#connection").textContent = "● Connected · " + role;
   await load();
+  await openRequestedReview();
 }
 $("#password-form").onsubmit = (e) => {
   e.preventDefault();
@@ -164,13 +166,37 @@ $("#pause").onclick = () =>
     await load();
   });
 let operationTimer;
+let reviewOpened = false;
+async function openRequestedReview() {
+  const id = new URL(location.href).searchParams.get("review");
+  if (reviewOpened || !id || !/^[a-f0-9]{32}$/.test(id)) return;
+  reviewOpened = true;
+  await showOperation(id);
+}
+
 async function showOperation(id) {
   clearTimeout(operationTimer);
   const o = await api("operations/" + id);
   const box = $("#detail-body");
-  box.innerHTML = view === "assistant"
-    ? `<section dir="rtl" lang="fa"><h3>بررسی مستقل عملیات</h3><p dir="auto">${esc(o.method)} · ${esc(o.payload.chat_id || "بدون مقصد کانال")}</p><p>وضعیت: ${esc(o.status)}</p><p class="chat-reply">${esc(o.payload.text || o.payload.caption || "عملیات بدون متن؛ داده‌های کامل را بررسی کنید.")}</p><details><summary>داده‌های کامل و زمان اجرا</summary>${pretty(o)}</details></section>`
+  box.innerHTML = (view === "assistant" || new URL(location.href).searchParams.has("review"))
+    ? `<section dir="rtl" lang="fa"><h3>بررسی مستقل عملیات</h3><p dir="auto">${esc(o.method)} · ${esc(o.payload.chat_id || "بدون مقصد کانال")}</p><p>وضعیت: ${esc(o.status)}</p><p>زمان اجرا: ${esc(new Date(o.run_at).toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }))} · تهران</p><p class="chat-reply">${esc(o.payload.text || o.payload.caption || "عملیات بدون متن؛ داده‌های کامل را بررسی کنید.")}</p><details><summary>داده‌های کامل و زمان اجرا</summary>${pretty(o)}</details></section>`
     : pretty(o);
+  for (const assetId of Object.values(o.attachments || {})) {
+    if (!/^[a-f0-9]{32}$/.test(assetId)) continue;
+    try {
+      const response = await fetch("/v1/assets/" + assetId, {
+        headers: key ? { Authorization: "Bearer " + key } : {},
+      });
+      if (!response.ok || !/^image\/(png|jpeg|webp)(;|$)/.test(response.headers.get("Content-Type") || "")) continue;
+      const url = URL.createObjectURL(await response.blob());
+      const image = new Image();
+      image.alt = "پیش‌نمایش تصویر پیوست";
+      image.style.cssText = "max-width:100%;max-height:45vh;object-fit:contain";
+      image.onload = image.onerror = () => URL.revokeObjectURL(url);
+      image.src = url;
+      box.append(image);
+    } catch { /* Full attachment IDs remain visible for independent review. */ }
+  }
   const actions = document.createElement("div");
   actions.className = "actions";
   if (o.status === "draft" && role === "owner")

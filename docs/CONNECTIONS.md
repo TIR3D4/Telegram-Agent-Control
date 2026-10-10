@@ -141,4 +141,4 @@ run the managed setup against an unrelated provider.
 
 ## No custom-MCP registration / mobile-only owner
 
-Use the [independent Persian console assistant](MOBILE_ASSISTANT.md). It does not require or enable a ChatGPT account feature. Existing OAuth/MCP connections remain available to supported clients; no manifest or network workaround is claimed to register a missing connection option.
+For control **inside ChatGPT**, see the [cloud connector candidate and activation gates](CHATGPT_CLOUD_CONTROL.md). It is not connected until a real plugin call succeeds. The [independent console assistant](MOBILE_ASSISTANT.md) is optional and is a different chat surface; it does not satisfy in-ChatGPT control. No manifest or network workaround is claimed to unlock a missing host feature.
