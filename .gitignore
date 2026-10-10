@@ -27,3 +27,11 @@ Caddyfile.backup-*
 Caddyfile.before-*
 
 diagnostics/
+
+# Local optimizer telemetry and generated session artifacts
+.codex-context/*.json
+!.codex-context/UPSTREAM.json
+.codex-context/*.jsonl
+.codex-context/benchmarks/
+.codex-context/HANDOFF.md
+.context/HANDOFF.md

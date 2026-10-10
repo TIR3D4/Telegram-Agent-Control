@@ -130,6 +130,8 @@ At runtime: `/docs`, `/redoc`, `/openapi.json`; method-specific contracts: `/v1/
 
 ## Development
 
+Moving development into Codex: [ready-to-use handoff and environment setup](docs/CODEX_HANDOFF.md). The pinned context optimizer is included; production credentials are not.
+
 ```bash
 python3.12 -m venv .venv
 . .venv/bin/activate
