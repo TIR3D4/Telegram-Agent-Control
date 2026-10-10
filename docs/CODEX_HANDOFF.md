@@ -1,5 +1,7 @@
 # Codex development handoff
 
+For the subsequent repository takeover, fixes and independently rerun checks, read [development audit](CODEX_AUDIT.md). The results below describe the original handoff and remain historical evidence only.
+
 Select repository `TIR3D4/Telegram-Agent-Control`, branch `engineering/codex-handoff`. This branch includes the working v0.4 application plus project-local context tooling and concise handoff notes. It does not migrate your ChatGPT conversation, credentials, plugin installation or server access into Codex.
 
 ## Start prompt

@@ -1,11 +1,11 @@
 # Current handoff — 2026-10-10
 
-Goal: onboard Codex as the development/maintenance environment for this repository using the installed context optimizer; preserve the working product.
+Goal: maintain TAC as a Telegram control plane used from external ChatGPT/Codex/Claude conversations; console handles connections, independent owner approval and operations. No new chat or agent shell.
 
-Base application commit: `63617abf6cb1b429ca1653a10addd64a249571ba`, branch `engineering/unified-control-v0.4`. Handoff branch: `engineering/codex-handoff`.
+Checkout: `codex/handoff-audit`, based on `engineering/codex-handoff` at `c80778a`; application fixes through `544fb03`. Draft PR #6: https://github.com/TIR3D4/Telegram-Agent-Control/pull/6. See `docs/CODEX_AUDIT.md` for independently verified evidence and priorities. Older handoff reports remain historical only.
 
-Verified historical state: full CI for the base commit passed (537 SQLite tests + 4 skipped; 541 PostgreSQL; 22 browser tests; Compose lifecycle and authenticated MCP). Owner supplied a successful production upgrade and doctor report at 2026-10-10 09:49 UTC: 21 PASS, 2 WARN, 0 FAIL, 4 SKIP. Warnings were reboot needed and execution paused with one failed historical operation. This is a snapshot, not current monitoring. The failed operation was outside the then-connected agent's visibility and was not diagnosed.
+Fixed: Windows Git Bash setup/PTY collection; malformed MCP gateway responses with no automatic resend; direct restore rejects different backup commit before service mutation. No dependency/schema/approval-policy change. Existing optimizer used, all 8 tracked vendor hashes verified; no reinstall.
 
-Next: inspect git status/branch, read the compact source index and handoff, use the existing optimizer, verify development setup and the narrow relevant tests. Report a concise understanding and prioritized concrete gaps; implement the owner's next requested task in a review branch. Do not invent a new rewrite or deploy merely to onboard.
+Verified locally: setup, lint/format, mypy boundary, Bandit, Bash syntax, 18 mocked bridge tests. Full Windows SQLite run before restore fix: 537 pass / 5 skip / 2 Unix-mode assertion failures. After fix: 107 focused passes; lifecycle including shell regression 11 passes (overlapping counts). CI triggered; inspect exact final PR head before claiming green PostgreSQL/browser/Compose gates. Docker absent locally.
 
-Unverified: real Codex/Claude account connection, physical iPhone Safari, production end-to-end media delivery, current VPS state. Do not copy ChatGPT credentials or assume access transfers. Read-only production checks require a separately configured authorized connection. Deployment requires its own authorized access and explicit release decision.
+Unverified: actual client accounts, VPS/current doctor, live media delivery and old failed operation. No production access, publication or deployment performed. Next: final CI review, then separately scoped read-only client/server checks. Deployment needs explicit authorization on a known commit with backup/migration/health review. Never retry uncertain work or restore across revisions without compatibility review.
