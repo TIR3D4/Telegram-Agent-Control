@@ -15,3 +15,7 @@ Status: resource-server authentication and protocol behavior are covered by auto
 The platform's tool confirmation is additional to TAC's owner approval; it does not automatically approve a post in TAC. This server exposes no owner-approval tool. Models may not inspect every animation frame from a single returned image; use rendered previews and original files appropriately.
 
 Official references checked 2026-10-09: [OpenAI authentication](https://developers.openai.com/plugins/build/auth), [MCP authorization](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization), [MCP security](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices). OAuth login/PKCE/client registration are supplied by the external authorization server, not by TAC. See [known limitations](KNOWN_LIMITATIONS.md).
+
+## ChatGPT-first cloud connector candidate
+
+The optional in-panel chat is separate from ChatGPT. See [cloud connection design and exact verification status](CHATGPT_CLOUD_CONTROL.md) for the private plugin adapter, independent owner review and activation requirements. Source is prepared; live connection is not yet verified.

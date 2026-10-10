@@ -14,7 +14,11 @@
 
 <p align="center"><a href="docs/INSTALL.md">Install</a> · <a href="docs/API.md">API</a> · <a href="docs/AGENTS.md">Connect an agent</a> · <a href="docs/AUTOMATION.md">Automation</a> · <a href="docs/README.fa.md">راهنمای فارسی</a></p>
 
-## Persian mobile assistant
+## Control from ChatGPT — connection candidate
+
+The target is conversation inside ChatGPT, including on the owner's phone. A private cloud adapter to the existing gateway is prepared; live registration and phone invocation remain unverified. See [connection implementation and test evidence](docs/CHATGPT_CLOUD_CONTROL.md) and [source-level research on managing GitHub, tests and servers from ChatGPT](docs/CHATGPT_PROJECT_MANAGEMENT_RESEARCH.md). No additional VPS installation is required for reading or reviewing this candidate.
+
+## Optional separate Persian assistant
 
 An independent Persian RTL chat is available in the console on the `engineering/mobile-assistant` review branch. Configure a provider/model/key from the web; Telegram writes remain drafts pending independent owner approval. This does not enable a missing ChatGPT custom-MCP account feature. API usage is billed separately. [Setup and limits](docs/MOBILE_ASSISTANT.md) · [source comparison and architecture decision](docs/MOBILE_ASSISTANT_RESEARCH.md). Autonomous coding/deployment is not implemented.
 
@@ -152,3 +156,7 @@ SQLite is available for single-worker development. **PostgreSQL is required for 
 Read [CONTRIBUTING.md](CONTRIBUTING.md). Keep changes small, include behavior tests for execution or security changes, and update the matching documentation. Never include bot tokens, `.env` files, customer exports or production media in a pull request.
 
 MIT licensed. See [LICENSE](LICENSE) and [SECURITY.md](SECURITY.md).
+
+## ChatGPT-first cloud connector candidate
+
+The optional in-panel chat is separate from ChatGPT. See [cloud connection design and exact verification status](docs/CHATGPT_CLOUD_CONTROL.md) for the private plugin adapter, independent owner review and activation requirements. Source is prepared; live connection is not yet verified.

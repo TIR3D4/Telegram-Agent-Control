@@ -54,6 +54,8 @@ jobs:
           node --check tac/static/assistant.js
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
+      - name: Cloud connector security and protocol tests
+        run: node --test integrations/chatgpt-cloud/tests/connector.test.mjs
       - name: Browser console test
         run: |
           python -m venv --system-site-packages .venv

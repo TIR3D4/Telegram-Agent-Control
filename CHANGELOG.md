@@ -32,3 +32,12 @@ Initial control-plane release: Bot API 10.3 registry, authenticated REST/MCP, we
 - Preserve login/OAuth on upgrade; support explicit reviewed commit, private upgrade reports and optional console-only initial setup.
 - Include vault in verified backups; block unreviewed cross-revision database rollback.
 - Add iPhone viewport/WebKit CI coverage and denial/idempotency/quota/provider-boundary tests.
+
+## ChatGPT cloud control candidate — 2026-10-10
+
+- Fix Workers-incompatible redirect mode; reject redirects explicitly and verify with an actual workerd regression test. Add a private credential-free gateway readiness probe.
+
+- Restore in-ChatGPT control as the goal; standalone chat remains optional.
+- Add a private cloud MCP-to-REST connector with per-user encrypted scoped credentials, bounded tools and media import.
+- Add owner review deep links, Tehran schedule display and authenticated attachment previews.
+- Preserve the existing gateway, scheduler, OAuth, data and independent approval. No production deployment or live connection claimed.
