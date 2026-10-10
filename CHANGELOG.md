@@ -1,5 +1,11 @@
 ## 0.4.0 — Unified control workspace (review candidate)
 
+## Unreleased — Codex handoff
+
+- Add project-local pinned Codex Context Optimizer runtime, license, provenance and compact source/task context.
+- Preserve existing approval/security instructions; document development setup, historical deployment evidence and access limits.
+- No runtime, schema or production changes.
+
 ## Unreleased — installation diagnostics
 
 - Expand `tacctl doctor` into bounded, read-only host/Compose/database/worker/REST/MCP/OAuth/Telegram/backup diagnosis.

@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/TIR3D4/codex-context-optimizer",
+  "commit": "a19f394e95d79dbd68aca5ab28e222b53d30ac99",
+  "license": "MIT",
+  "installation": "Project-local pinned runtime copy; no global installer executed",
+  "sha256": {
+    "tools/codex-context.py": "5b2265322a31bbda9c215abab5e3ff5b42fda5b4d5bfa990f126318421ddf6c9",
+    "tools/work-context.py": "89ddac6cf7653e891b292271542a9fdb4fabe1c6feabb97e38a3a4c28667f16b",
+    "AUTO_MODE.md": "2e77655b796b2fc7f70f20d721a0471cd9556696da55f109ee96564795b331ea",
+    "LICENSE": "f0c26e842c4152b27d9b5c77dd69fa816b1f112bc3ef944d719f348d6aa192d8",
+    "templates/work/PROJECT_CONTEXT.md": "fe138f200a19d49fc60b99d142ce224be32c66b121719e47348c8967a375b3cb",
+    "templates/work/CURRENT_TASK.md": "947984c56461045f1ccc859c4b8a78ebaefb5fa1f9d5c71040f93b11264782ea",
+    "templates/work/DECISIONS.md": "5d75d9dcee3a6edd71b67547cdee1503306be38495d0aa664454a3f735678092",
+    "templates/work/SOURCE_INDEX.md": "e3bbde53e568d99154931e3de4892c6842c1165a8f974ab6c4a70b51e8dcdc36"
+  }
+}
