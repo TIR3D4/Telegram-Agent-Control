@@ -1,3 +1,16 @@
+## Final CI acceptance — green
+
+Code revision `30e364064fe0100165a771099dd446376a3c40a0` passed [GitHub CI run 38038697263](https://github.com/TIR3D4/Telegram-Agent-Control/actions/runs/38038697263) on 2026-10-10:
+
+- SQLite: **515 passed, 4 skipped**.
+- PostgreSQL, including concurrency: **519 passed**.
+- Chromium + iPhone-profile WebKit: **22 passed** (automated engine, not a physical iPhone).
+- Migration roundtrip, lint, boundary typecheck, static security, locked dependency audit and connector tests: passed.
+- Docker build and Compose readiness: passed.
+- Verified backup/restore, same-revision rollback, data-preserving uninstall/reinstall: passed in isolated CI.
+
+This supersedes the earlier local WebKit/Docker limitations for CI evidence. It does not mean the production VPS was upgraded or that Codex/Claude accounts were connected. The following is the detailed chronology of local and live verification.
+
 # v0.4 validation — 2026-10-10
 
 ## Executed locally

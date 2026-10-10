@@ -23,3 +23,7 @@ The old draft advertisement remains unchanged on the live service; it was not pu
 The existing owner-private Site was updated successfully on 2026-10-10, preserving project/plugin identity, audience and environment revision 1. Site source commit: `41cc4c2a7bba9051a425542f562efe83043da1aa`. Deployment: `appgdep_6ac9f91b65d88191a5a1a31e538e1ff0`, status `succeeded`, `has_mcp=true`. After deployment, the existing plugin's real `inspect_system` call still returned the scoped agent and fresh v0.3 worker status. New tool discovery was not yet refreshed in this conversation, so a live file-byte upload through the new tool is not claimed.
 
 VPS upgrade remains blocked: the actual SSH probe to the specified server returned `Network is unreachable`. The existing Telegram MCP grant has no deployment authority. Run the reviewed pinned upgrade through an authorized server terminal; do not substitute the owner credential or add a generic shell tool. GitHub changes are in PR #4, not merged into the default branch.
+
+## Final acceptance
+
+Implementation revision `30e364064fe0100165a771099dd446376a3c40a0` passed full GitHub CI run `38038697263`, including PostgreSQL, 22 Chromium/WebKit browser tests, Docker/Compose and backup/restore/rollback/reinstall smoke tests. Pin this revision for the VPS upgrade. Later report-only commits do not alter tested application code. Production SSH remains inaccessible from this environment; this report does not claim a VPS deployment.
