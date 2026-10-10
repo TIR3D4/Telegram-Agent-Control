@@ -14,6 +14,8 @@ Use `bash scripts/codex_setup.sh` as the environment setup command if the enviro
 
 ## Navigation / validation
 
+On Windows with Git Bash, setup also accepts `python` when the `python3` launcher is unavailable and uses `.venv/Scripts/python.exe`. Set `PYTHON` to an explicit interpreter path if needed. Use `.venv/Scripts/python.exe -m pytest -q` for local tests. The POSIX terminal test is skipped on Windows; Docker/PostgreSQL, Unix file-permission and browser acceptance still need their supported environments. A successful dependency install alone does not verify those gates.
+
 Read `.context/SOURCE_INDEX.md` before opening only the files relevant to the task. Read README.md and docs/ARCHITECTURE.md when modifying execution behavior.
 
 ```bash
