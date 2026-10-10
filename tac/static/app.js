@@ -178,7 +178,7 @@ async function showOperation(id) {
   clearTimeout(operationTimer);
   const o = await api("operations/" + id);
   const box = $("#detail-body");
-  box.innerHTML = (view === "assistant" || new URL(location.href).searchParams.has("review"))
+  box.innerHTML = true
     ? `<section dir="rtl" lang="fa"><h3>بررسی مستقل عملیات</h3><p dir="auto">${esc(o.method)} · ${esc(o.payload.chat_id || "بدون مقصد کانال")}</p><p>وضعیت: ${esc(o.status)}</p><p>زمان اجرا: ${esc(new Date(o.run_at).toLocaleString("fa-IR", { timeZone: "Asia/Tehran" }))} · تهران</p><p class="chat-reply">${esc(o.payload.text || o.payload.caption || "عملیات بدون متن؛ داده‌های کامل را بررسی کنید.")}</p><details><summary>داده‌های کامل و زمان اجرا</summary>${pretty(o)}</details></section>`
     : pretty(o);
   for (const assetId of Object.values(o.attachments || {})) {

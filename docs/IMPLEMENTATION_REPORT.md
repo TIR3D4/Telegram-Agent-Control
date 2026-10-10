@@ -1,3 +1,5 @@
+Latest workspace release evidence: [V04_IMPLEMENTATION_REPORT.md](V04_IMPLEMENTATION_REPORT.md).
+
 # Implementation report — v0.2 hardening
 
 Date: 2026-10-09. Repository: TIR3D4/Telegram-Agent-Control. Branch: `engineering/production-hardening-v0.2`. Baseline: `faf2b9d73f7c687a2ad2cfd07bdac92f605941fb`. No default-branch rewrite, merge or production deployment.

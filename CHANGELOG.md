@@ -1,3 +1,13 @@
+## 0.4.0 — Unified control workspace (review candidate)
+
+- Separate REST, MCP, Codex, Claude and ChatGPT connection profiles with secret-free exports.
+- Actual browser REST identity / MCP initialization / tool-discovery test; no false host-wide connection claim.
+- Persian RTL responsive shell, operational dashboard, status-filtered post cards, visual text/photo composer and readable owner review.
+- Keep advanced API/JSON and optional internal chat without deleting data or changing execution policies.
+- Private cloud adapter: bounded Base64 file upload and individual Telegram type discovery.
+- Add pinned v0.4 branch to upgrade allowlist; preserve existing backup, migration, OAuth and pause behavior.
+- See docs/V04_TEST_RESULTS.md for tested and blocked environments.
+
 # Changelog
 
 ## Setup hotfix — non-seekable SSH terminal

@@ -79,7 +79,7 @@ test("discovery supplies typed tools without exposing admin endpoints", async ()
     const body = await r.json();
     assert.ok(body.result);
   }
-  assert.equal(TOOLS.length, 12);
+  assert.equal(TOOLS.length, 14);
   assert.ok(!TOOLS.some((t) => /approve|shell|credential|deploy/.test(t.name)));
 });
 test("missing identity and unconnected user cannot invoke gateway", async () => {
@@ -334,4 +334,26 @@ test("oversized malformed MCP input is rejected without tools execution", async 
     );
     assert.equal(r.status, 400);
   }
+});
+
+test("file bytes upload uses scoped gateway and returns an asset without publication",async()=>{
+  const env=await linked();const calls=[];
+  const out=await execute(env,user,'upload_media',{name:'test.txt',mime:'text/plain',data_base64:btoa('actual file bytes')},async(url,init)=>{
+    calls.push(url);assert.equal(init.headers.Authorization,'Bearer '+token);
+    assert.equal(JSON.parse(init.body).data_base64,btoa('actual file bytes'));
+    return json({id:'b'.repeat(32),size:17});
+  });
+  assert.equal(out.id,'b'.repeat(32));assert.deepEqual(calls,['https://gateway.example/v1/assets/encoded']);
+});
+test("file upload rejects oversized or invalid bytes before network and requires identity",async()=>{
+  const env=await linked();
+  for(const value of ['@@bad',btoa('x'.repeat(1048577))])
+    await assert.rejects(()=>execute(env,user,'upload_media',{name:'x',mime:'text/plain',data_base64:value},never));
+  const r=await rpc(msg('upload_media',{name:'x',mime:'text/plain',data_base64:'eA=='},null),env,never);
+  assert.equal((await r.json()).error.code,-32001);
+});
+test("MCP file upload accepts payload above old 32KB limit",async()=>{
+  const r=await rpc(msg('upload_media',{name:'x.txt',mime:'text/plain',data_base64:btoa('x'.repeat(40000))}),await linked(),async()=>json({id:'c'.repeat(32)}));
+  const body=await r.json();assert.equal(body.result.isError,false);
+  assert.match(body.result.content[0].text,/cccccccc/);
 });

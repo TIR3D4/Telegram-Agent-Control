@@ -51,7 +51,17 @@ def agent_guide():
 def connections():
     c = settings()
     base = c.public_url.rstrip("/")
+    from .connection_profiles import profiles
+
     return {
+        "profiles": profiles(c.public_url, bool(c.oauth_issuer)),
+        "verification": "configuration_only",
+        "approval_policy": "independent_owner",
+        "media": {
+            "multipart": base + "/v1/assets",
+            "encoded": base + "/v1/assets/encoded",
+            "encoded_max_bytes": 1048576,
+        },
         "api_url": base + "/v1",
         "docs_url": base + "/docs",
         "openapi_url": base + "/openapi.json",

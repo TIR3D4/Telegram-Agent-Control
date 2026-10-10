@@ -1,13 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="fa" dir="rtl">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Telegram Agent Control</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/workspace.css" />
     <script defer src="/static/app.js"></script>
     <script defer src="/static/control.js"></script>
     <script defer src="/static/assistant.js"></script>
+    <script defer src="/static/workspace.js"></script>
     <link rel="manifest" href="/static/manifest.webmanifest">
     <meta name="theme-color" content="#10171c">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,10 +19,9 @@
       <a class="brand" href="/"
         >↗ <span>TELEGRAM<br /><b>AGENT CONTROL</b></span></a
       >
-      <div class="workspace">CONTROL PLANE <span>v0.3</span></div>
+      <div class="workspace">CONTROL PLANE <span>v0.4</span></div>
       <button id="chat-nav-toggle" aria-expanded="false" aria-controls="nav">فهرست مدیریت</button>
       <nav id="nav" aria-label="Workspace sections">
-        <button data-view="assistant">✦ دستیار گفتگو</button>
         <button data-view="overview" class="active">◉ Overview</button
         ><button data-view="operations">↗ Operations</button
         ><button data-view="compose">＋ Compose</button
@@ -37,6 +38,7 @@
         <button data-view="diagnostics">◈ Health & metrics</button>
         <button data-view="settings">⚙ Settings</button>
         <button data-view="maintenance">✓ Maintenance approvals</button>
+        <details class="legacy-nav"><summary>ابزارهای اختیاری</summary><button data-view="assistant">گفتگوی داخلی قدیمی</button></details>
       </nav>
       <div class="aside-foot">
         <span id="connection">● Disconnected</span

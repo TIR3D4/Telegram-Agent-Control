@@ -17,6 +17,7 @@ test("owner can inspect console and create a scheduled draft without publishing"
     fullPage: true,
   });
   await page.locator('[data-view="compose"]').click();
+  await page.locator('#advanced-compose').click();
   await page
     .locator("#payload")
     .fill(JSON.stringify({ chat_id: "@ui_test", text: "سلام از تست کنسول" }));
@@ -185,6 +186,7 @@ test("Persian assistant on an iPhone viewport keeps secrets private and renders 
   await page.locator('#password').fill('ui-password-for-tests');
   await page.locator('#password-form button').click();
   await expect(page.locator('#content')).toBeVisible();
+  await page.locator('.legacy-nav summary').click();
   await page.locator('[data-view="assistant"]').click();
   await expect(page.locator('.assistant')).toHaveAttribute('dir','rtl');
   await expect(page.locator('#chat-nav-toggle')).toBeVisible();
@@ -205,6 +207,7 @@ test("Persian assistant on an iPhone viewport keeps secrets private and renders 
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/assistant-iphone.png',fullPage:true});
   await page.reload();
+  await page.locator('.legacy-nav summary').click();
   await page.locator('[data-view="assistant"]').click();
   await expect(page.locator('.chat-state').last()).toHaveText('در صف');
   await page.getByRole('button',{name:'توقف گفتگو',exact:true}).last().click();
@@ -223,6 +226,7 @@ test("phone owner explicitly reviews and resumes a paused server from chat", asy
     const r=await fetch('/v1/system/pause?enabled=true',{method:'POST',headers:{'X-CSRF-Token':s.csrf}});
     if(!r.ok)throw Error('Pause failed');
   });
+  await page.locator('.legacy-nav summary').click();
   await page.locator('[data-view="assistant"]').click();
   await expect(page.locator('#chat-send')).toBeDisabled();
   await expect(page.locator('#chat-resume')).toBeVisible();

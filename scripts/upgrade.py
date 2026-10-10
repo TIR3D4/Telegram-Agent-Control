@@ -17,7 +17,12 @@ import time
 from datetime import datetime, timezone
 
 BRANCH = "engineering/production-hardening-v0.2"
-ALLOWED_BRANCHES = {BRANCH, "engineering/mobile-assistant", "engineering/chatgpt-cloud-control"}
+ALLOWED_BRANCHES = {
+    BRANCH,
+    "engineering/mobile-assistant",
+    "engineering/chatgpt-cloud-control",
+    "engineering/unified-control-v0.4",
+}
 REPORT = {}
 REPORT_PATH = None
 CONFIG_FILES = (".env", ".oauth.env", ".oauth-db.env", "compose.override.yaml", "Caddyfile", ".dockerignore")

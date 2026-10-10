@@ -34,3 +34,7 @@ The automated Compose drill tests the mechanics against the same revision. Cross
 ## Reviewed mobile assistant upgrade
 
 See [one-command pinned upgrade](MOBILE_ASSISTANT.md#installation--upgrade). Existing password/OAuth provisioning is retained without repeat prompts. `--commit` pins the reviewed revision; failures retain a private upgrade report and backups. Cross-revision DB rollback is blocked pending an isolated compatibility review.
+
+## v0.4 workspace candidate
+
+Use `engineering/unified-control-v0.4` and an exact reviewed commit with `scripts/upgrade.py`. Read the target script from the fetched commit before running, because an older installation does not recognize this branch. Run inside `/opt/Telegram-Agent-Control`. Preserve `.env` and OAuth overrides; never re-run first-install to upgrade. No new schema revision is introduced. Execution stays paused until the owner reviews and resumes in the dashboard. The separately hosted ChatGPT adapter requires its own reviewed deployment. A successful local test is not proof of a successful VPS upgrade.

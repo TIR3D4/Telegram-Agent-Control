@@ -75,6 +75,13 @@ const page = {
   offset: { type: "integer", minimum: 0, maximum: 100000 },
 };
 const specs = [
+  ["type_schema", "Read a referenced Telegram type from method_schema; request nested types individually for bounded output.", obj({name:str(100,"^[A-Za-z][A-Za-z0-9]*$")},["name"]),true],
+  [
+    "upload_media",
+    "Upload actual file bytes as Base64 (max 1 MiB decoded) to the existing scoped media store. Read/encode the file with host file tools; never fabricate bytes or URLs. Larger files use multipart /v1/assets. Returns an asset ID to bind in prepare_operation; this does NOT publish.",
+    obj({name:str(200), mime:str(120), data_base64:str(1398104,"^[A-Za-z0-9+/]*={0,2}$")},["name","mime","data_base64"]),
+    false,
+  ],
   [
     "connection_status",
     "Check whether this ChatGPT user has linked a scoped TAC credential. Does not call Telegram.",
@@ -467,10 +474,18 @@ export async function execute(env, user, name, args, fetcher = fetch) {
   const token = await tokenFor(env, user);
   const call = (v, p, b) => gateway(env, token, v, p, b, fetcher);
   switch (name) {
+    case "type_schema":
+      return call("GET", "/v1/types/" + args.name);
+    case "upload_media": {
+      let bytes;
+      try { bytes = unb64(args.data_base64); } catch { fail("Invalid Base64 file bytes"); }
+      if (!bytes.length || bytes.length > 1048576) fail("Encoded upload limit is 1 MiB; use multipart for larger files");
+      return call("POST", "/v1/assets/encoded", args);
+    }
     case "inspect_system":
       return call("GET", "/v1/system");
     case "method_schema":
-      return call("GET", "/v1/methods/" + args.method);
+      return call("GET", "/v1/methods/" + args.method + "?detail=false");
     case "prepare_operation":
       return review(env, await call("POST", "/v1/operations", args));
     case "operation_status":
@@ -549,7 +564,7 @@ export async function rpc(request, env, fetcher = fetch) {
   let msg;
   try {
     msg = JSON.parse(
-      new TextDecoder().decode(await readLimited(request, 32000)),
+      new TextDecoder().decode(await readLimited(request, 1450000)),
     );
   } catch {
     return response(
@@ -561,6 +576,8 @@ export async function rpc(request, env, fetcher = fetch) {
       400,
     );
   }
+  if (JSON.stringify(msg).length > 32000 && !(msg?.method === "tools/call" && msg?.params?.name === "upload_media"))
+    return response({jsonrpc:"2.0",id:null,error:{code:-32600,message:"Request too large"}},400);
   const error = (code, message) =>
     response({ jsonrpc: "2.0", id: msg?.id ?? null, error: { code, message } });
   if (
