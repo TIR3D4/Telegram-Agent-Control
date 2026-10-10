@@ -21,7 +21,7 @@ def checksum(path):
     return h.hexdigest()
 
 
-def verify(directory):
+def verify(directory, *, require_current_commit=False):
     directory = Path(directory)
     meta = json.loads((directory / "manifest.json").read_text())
     if set(meta["files"]) != FILES or not re.fullmatch(r"[0-9a-f]{40}", meta["commit"]):
@@ -42,6 +42,15 @@ def verify(directory):
                 continue
             if not member.isfile() or not re.fullmatch(r"[0-9a-f]{32}(?:\.[a-z0-9]{1,10})?", name):
                 raise ValueError("Unsafe media archive member")
+    if require_current_commit:
+        current = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parent.parent, text=True
+        ).strip()
+        if meta["commit"] != current:
+            raise ValueError(
+                "Cross-revision restore is blocked. Review schema/application compatibility in an isolated "
+                "restore before planning recovery; prefer a forward fix."
+            )
     return meta
 
 
@@ -66,6 +75,8 @@ if __name__ == "__main__":
         create(directory)
     elif action == "verify":
         verify(directory)
+    elif action == "verify-restore":
+        verify(directory, require_current_commit=True)
     else:
-        raise SystemExit("Expected create or verify")
+        raise SystemExit("Expected create, verify or verify-restore")
     print("Backup manifest " + action + " succeeded")

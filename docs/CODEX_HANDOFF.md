@@ -1,5 +1,7 @@
 # Codex development handoff
 
+For the subsequent repository takeover, fixes and independently rerun checks, read [development audit](CODEX_AUDIT.md). The results below describe the original handoff and remain historical evidence only.
+
 Select repository `TIR3D4/Telegram-Agent-Control`, branch `engineering/codex-handoff`. This branch includes the working v0.4 application plus project-local context tooling and concise handoff notes. It does not migrate your ChatGPT conversation, credentials, plugin installation or server access into Codex.
 
 ## Start prompt
@@ -13,6 +15,8 @@ Understand the existing Telegram Agent Control architecture and verify the devel
 Use `bash scripts/codex_setup.sh` as the environment setup command if the environment supports setup commands, or run it in the checkout terminal. It needs Python 3.12+, venv support and package-download access. No production `.env`, bot token, owner key, database or SSH credential is needed to run unit tests. The script installs development dependencies only; it does not create a cloud environment or register a client connection.
 
 ## Navigation / validation
+
+On Windows with Git Bash, setup also accepts `python` when the `python3` launcher is unavailable and uses `.venv/Scripts/python.exe`. Set `PYTHON` to an explicit interpreter path if needed. Use `.venv/Scripts/python.exe -m pytest -q` for local tests. The POSIX terminal test is skipped on Windows; Docker/PostgreSQL, Unix file-permission and browser acceptance still need their supported environments. A successful dependency install alone does not verify those gates.
 
 Read `.context/SOURCE_INDEX.md` before opening only the files relevant to the task. Read README.md and docs/ARCHITECTURE.md when modifying execution behavior.
 
